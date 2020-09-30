@@ -2,6 +2,7 @@
 
 
 #include "BP_SimulateFMU.h"
+#include "FMU2.h"
 
 float UBP_SimulateFMU::SimulateFMU(const float In) {
 	UE_LOG(LogTemp, Warning, TEXT("DemoText"));
