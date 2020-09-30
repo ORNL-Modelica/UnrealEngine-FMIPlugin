@@ -3,6 +3,7 @@
  *  This file is part of FMIKit. See LICENSE.txt in the project  *
  *  root for license information.                                *
  *****************************************************************/
+#include "FMU2.h"
 
 #include <iostream>
 
@@ -10,8 +11,6 @@
 	#include <stdarg.h>
 	#include <dlfcn.h>
 #endif
-
-#include "FMU2.h"
 
 using namespace std;
 

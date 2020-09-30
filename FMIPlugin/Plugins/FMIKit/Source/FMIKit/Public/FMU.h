@@ -5,6 +5,7 @@
  *  This file is part of FMIKit. See LICENSE.txt in the project  *
  *  root for license information.                                *
  *****************************************************************/
+#define WIN32_LEAN_AND_MEAN
 
 #ifdef _WIN32
 #include <windows.h>

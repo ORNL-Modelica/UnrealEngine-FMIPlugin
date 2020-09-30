@@ -3,11 +3,9 @@
  *  This file is part of FMIKit. See LICENSE.txt in the project  *
  *  root for license information.                                *
  *****************************************************************/
-
-#include <iostream>
-
 #include "FMU1.h"
 
+#include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <stdarg.h>
