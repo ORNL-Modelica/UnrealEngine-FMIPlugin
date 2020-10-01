@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fmiModelDescription
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  fmiVersion="2.0"
+  modelName="test"
+  guid="{1d19fee2-02f1-4ae7-b863-b6f380f15015}"
+  generationTool="Dymola Version 2021 (64-bit), 2020-05-13 (using Dassl with tolerance 0.0001)"
+  generationDateAndTime="2020-09-17T13:32:29Z"
+  variableNamingConvention="structured"
+  numberOfEventIndicators="0">
+  <CoSimulation
+    modelIdentifier="test"
+    canHandleVariableCommunicationStepSize="true"
+    canInterpolateInputs="true"
+    maxOutputDerivativeOrder="1"
+    canBeInstantiatedOnlyOncePerProcess="true"
+    canNotUseMemoryManagementFunctions="true"
+    canGetAndSetFMUstate="true"
+    canSerializeFMUstate="true"
+    providesDirectionalDerivative="true"/>
+  <DefaultExperiment startTime="0.0"
+    stopTime="1.0"
+    tolerance="0.0001"/>
+  <ModelVariables>
+    <!-- Index for next variable = 1 -->
+    <ScalarVariable
+      name="sigma"
+      valueReference="16777216"
+      causality="parameter"
+      variability="tunable">
+      <Real start="10"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 2 -->
+    <ScalarVariable
+      name="rho"
+      valueReference="16777217"
+      causality="parameter"
+      variability="tunable">
+      <Real start="28"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 3 -->
+    <ScalarVariable
+      name="beta"
+      valueReference="16777218"
+      causality="parameter"
+      variability="tunable">
+      <Real start="2.6666666666666665"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 4 -->
+    <ScalarVariable
+      name="x_start"
+      valueReference="16777219"
+      description="Initial x-coordinate"
+      causality="parameter"
+      variability="fixed">
+      <Real start="1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 5 -->
+    <ScalarVariable
+      name="y_start"
+      valueReference="16777220"
+      description="Initial y-coordinate"
+      causality="parameter"
+      variability="fixed">
+      <Real start="1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 6 -->
+    <ScalarVariable
+      name="z_start"
+      valueReference="16777221"
+      description="Initial z-coordinate"
+      causality="parameter"
+      variability="fixed">
+      <Real start="1"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 7 -->
+    <ScalarVariable
+      name="x"
+      valueReference="33554432"
+      description="x-coordinate">
+      <Real/>
+    </ScalarVariable>
+    <!-- Index for next variable = 8 -->
+    <ScalarVariable
+      name="der(x)"
+      valueReference="587202560"
+      description="der(x-coordinate)">
+      <Real derivative="7"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 9 -->
+    <ScalarVariable
+      name="y"
+      valueReference="33554433"
+      description="y-coordinate">
+      <Real/>
+    </ScalarVariable>
+    <!-- Index for next variable = 10 -->
+    <ScalarVariable
+      name="der(y)"
+      valueReference="587202561"
+      description="der(y-coordinate)">
+      <Real derivative="9"/>
+    </ScalarVariable>
+    <!-- Index for next variable = 11 -->
+    <ScalarVariable
+      name="z"
+      valueReference="33554434"
+      description="z-coordinate">
+      <Real/>
+    </ScalarVariable>
+    <!-- Index for next variable = 12 -->
+    <ScalarVariable
+      name="der(z)"
+      valueReference="587202562"
+      description="der(z-coordinate)">
+      <Real derivative="11"/>
+    </ScalarVariable>
+  </ModelVariables>
+  <ModelStructure>
+    <Derivatives>
+      <Unknown index="8"
+        dependencies="7 9"
+        dependenciesKind="fixed fixed"/>
+      <Unknown index="10"
+        dependencies="7 9 11"
+        dependenciesKind="dependent fixed dependent"/>
+      <Unknown index="12"
+        dependencies="7 9 11"
+        dependenciesKind="dependent dependent fixed"/>
+    </Derivatives>
+    <InitialUnknowns>
+      <Unknown index="7"
+        dependencies="4"
+        dependenciesKind="dependent"/>
+      <Unknown index="8"
+        dependencies="1 4 5"
+        dependenciesKind="dependent dependent dependent"/>
+      <Unknown index="9"
+        dependencies="5"
+        dependenciesKind="dependent"/>
+      <Unknown index="10"
+        dependencies="2 4 5 6"
+        dependenciesKind="dependent dependent dependent dependent"/>
+      <Unknown index="11"
+        dependencies="6"
+        dependenciesKind="dependent"/>
+      <Unknown index="12"
+        dependencies="3 4 5 6"
+        dependenciesKind="dependent dependent dependent dependent"/>
+    </InitialUnknowns>
+  </ModelStructure>
+</fmiModelDescription>
