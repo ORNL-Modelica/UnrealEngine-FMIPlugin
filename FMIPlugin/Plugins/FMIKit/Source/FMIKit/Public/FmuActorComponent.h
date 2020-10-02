@@ -26,6 +26,13 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+		float SpeedMultiplier = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+		FVector DistanceMultiplier = {1.f,1.f,1.f};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+		float StopTimeMultiplier = 1.f;
+
 private:
 	UPROPERTY(EditAnywhere)
 	FString mPath = "../test";
@@ -43,4 +50,7 @@ private:
 	fmi2Real mTimeLast;
 	fmi2Real mTimeNow;
 	bool mLoaded = false;
+
+	FVector StartLocation;
+	FVector NewLocation;
 };

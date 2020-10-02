@@ -2,6 +2,7 @@
 
 
 #include "FmuActorComponent.h"
+#include "GameFramework/Actor.h"
 
 // Sets default values for this component's properties
 UFmuActorComponent::UFmuActorComponent()
@@ -21,6 +22,9 @@ void UFmuActorComponent::BeginPlay()
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UFmuActorComponent::BeginPlay()"));
 	Super::BeginPlay();
 
+	StartLocation = GetOwner()->GetActorLocation();
+	NewLocation = StartLocation;
+
 	UE_LOG(LogTemp, Warning, TEXT("DemoText"));
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("This is an on screen message!"));
 
@@ -34,7 +38,7 @@ void UFmuActorComponent::BeginPlay()
 		mModelIdentifier = "test";
 		mInstanceName = "instance";
 		mStartTime = 0.;
-		mStopTime = 1.;
+		mStopTime = 1.* StopTimeMultiplier;
 		mStepSize = 0.1;
 		mTolerance = 0.0001;
 		mTimeLast = mStartTime;
@@ -70,16 +74,19 @@ void UFmuActorComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		return;
 
 	mTimeNow += DeltaTime;
-	if (!(mTimeNow > mTimeLast + mStepSize))
+	if (!(mTimeNow > mTimeLast + mStepSize/SpeedMultiplier))
 		return;
 
-	if (mTimeNow > mStopTime)
+	if (mTimeNow > mStopTime/ SpeedMultiplier)
 		return;
 
 	mFmu->doStep(mStepSize);
-	mTimeLast += mStepSize;
-	double value = mFmu->getReal(33554432);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::SanitizeFloat(mTimeLast) + " " + FString::SanitizeFloat(value));
-	UE_LOG(LogTemp, Warning, TEXT("%s, %s"), *FString::SanitizeFloat(mTimeLast), *FString::SanitizeFloat(value));
+	mTimeLast += mStepSize / SpeedMultiplier;
+	//float value = mFmu->getReal(33554432);
+	NewLocation = {(float) mFmu->getReal(33554432)* DistanceMultiplier[0] + StartLocation[0], (float) mFmu->getReal(33554433)* DistanceMultiplier[1] + StartLocation[1], (float) mFmu->getReal(33554434)* DistanceMultiplier[2] + StartLocation[2] };
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::SanitizeFloat(mTimeLast) + " " + FString::SanitizeFloat(value));
+	//UE_LOG(LogTemp, Warning, TEXT("%s, %s"), *FString::SanitizeFloat(mTimeLast), *FString::SanitizeFloat(value));
+
+	GetOwner()->SetActorLocation(NewLocation);
 }
 
