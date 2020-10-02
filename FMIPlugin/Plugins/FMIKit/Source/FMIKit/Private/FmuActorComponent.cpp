@@ -17,10 +17,48 @@ UFmuActorComponent::UFmuActorComponent()
 // Called when the game starts
 void UFmuActorComponent::BeginPlay()
 {
+	UE_LOG(LogTemp, Warning, TEXT("UFmuActorComponent::BeginPlay()"));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UFmuActorComponent::BeginPlay()"));
 	Super::BeginPlay();
 
-	// ...
+	UE_LOG(LogTemp, Warning, TEXT("DemoText"));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("This is an on screen message!"));
+
+	// We want to extract from an .fmu file
+	FString fullPath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + mPath);
+	mUnzipDir = std::string(TCHAR_TO_UTF8(*fullPath));
+
+	// These should be populated from the extracted ModelDescription.xml
+	{
+		mGuid = "{1d19fee2-02f1-4ae7-b863-b6f380f15015}";
+		mModelIdentifier = "test";
+		mInstanceName = "instance";
+		mStartTime = 0.;
+		mStopTime = 1.;
+		mStepSize = 0.1;
+		mTolerance = 0.0001;
+		mTimeLast = mStartTime;
+		mTimeNow = mStartTime;
+	}
+
+	FString DebugLog(mUnzipDir.c_str());
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *DebugLog);
+
+	mFmu = new fmikit::FMU2Slave(mGuid, mModelIdentifier, mUnzipDir, mInstanceName);
+
+	mFmu->instantiate(true);
+	UE_LOG(LogTemp, Warning, TEXT("instantiate complete!"));
+
+	mFmu->setupExperiment(true, mTolerance, mStartTime, true, mStopTime);
+	UE_LOG(LogTemp, Warning, TEXT("setupExperiment complete!"));
+
+	mFmu->enterInitializationMode();
+	UE_LOG(LogTemp, Warning, TEXT("enterInitializationMode complete!"));
+
+	mFmu->exitInitializationMode();
+	UE_LOG(LogTemp, Warning, TEXT("exitInitializationMode complete!"));
 	
+	mLoaded = true;
 }
 
 
@@ -28,7 +66,20 @@ void UFmuActorComponent::BeginPlay()
 void UFmuActorComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (!mLoaded)
+		return;
 
-	// ...
+	mTimeNow += DeltaTime;
+	if (!(mTimeNow > mTimeLast + mStepSize))
+		return;
+
+	if (mTimeNow > mStopTime)
+		return;
+
+	mFmu->doStep(mStepSize);
+	mTimeLast += mStepSize;
+	double value = mFmu->getReal(33554432);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::SanitizeFloat(mTimeLast) + " " + FString::SanitizeFloat(value));
+	UE_LOG(LogTemp, Warning, TEXT("%s, %s"), *FString::SanitizeFloat(mTimeLast), *FString::SanitizeFloat(value));
 }
 
