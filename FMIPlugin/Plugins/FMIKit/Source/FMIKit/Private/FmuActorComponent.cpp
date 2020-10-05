@@ -3,11 +3,8 @@
 
 #include "FmuActorComponent.h"
 #include "GameFramework/Actor.h"
-
 #include "XmlFile.h"
 #include "unzipper.hpp"
-
-
 
 
 // Sets default values for this component's properties
@@ -58,7 +55,7 @@ void UFmuActorComponent::BeginPlay()
 		{
 			FString key = node->GetAttribute("name");
 			int value = FCString::Atoi(*node->GetAttribute("valueReference"));
-			mValRefMap.insert({ key, value });
+			mValRefMap.Add(key, value);
 		}
 		mGuid = TCHAR_TO_UTF8(*root->GetAttribute("guid"));
 		mModelIdentifier = TCHAR_TO_UTF8(*root->GetAttribute("modelName"));;

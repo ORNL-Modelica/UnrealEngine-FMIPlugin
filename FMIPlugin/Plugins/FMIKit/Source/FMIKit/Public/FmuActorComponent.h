@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include <map>
-
+#include "Containers/Map.h"
 #include "FMU2.h"
 #include "Engine/EngineTypes.h"
 #include "CoreMinimal.h"
@@ -34,12 +33,14 @@ public:
 		FVector DistanceMultiplier = {1.f,1.f,1.f};
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 		float StopTimeMultiplier = 1.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+        FFilePath mPath;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MapsAndSets")
+        TMap<FString, int> mValRefMap;
 
 private:
-	UPROPERTY(EditAnywhere)
-	FFilePath mPath;
-
 	fmikit::FMU2Slave *mFmu = nullptr;
+
 	std::string mUnzipDir;
 	std::string mGuid;
 	std::string mModelIdentifier;
@@ -51,8 +52,6 @@ private:
 	fmi2Real mTimeLast;
 	fmi2Real mTimeNow;
 	bool mLoaded = false;
-
-	std::map<FString, int> mValRefMap;
 
 	FVector mStartLocation;
 	FVector mNewLocation;

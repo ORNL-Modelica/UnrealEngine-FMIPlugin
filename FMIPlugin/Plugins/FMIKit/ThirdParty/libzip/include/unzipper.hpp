@@ -31,9 +31,9 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
 #include <experimental/filesystem>
-
 namespace fs = std::experimental::filesystem;
 
 namespace
@@ -60,33 +60,33 @@ bool unzip(const std::string& zip_file, const std::string& tmp_path)
 
             if (sb.size == 0) {
                 fs::create_directories(newFile);
-			}
-			else if (fs::exists(fs::path{ newFile })) {
-				std::cout << newFile << " exists.";
-				continue;
-			}
-			else {
-				const auto containingDirectory = fs::path{ newFile }.parent_path();
-					if (!fs::exists(containingDirectory) && !fs::create_directories(containingDirectory)) {
-						return false;
-					}
-				zf = zip_fopen_index(za, i, 0);
+            }
+            else if (fs::exists(fs::path{ newFile })) {
+                std::cout << newFile << " exists.";
+                continue;
+            }
+            else {
+                const auto containingDirectory = fs::path{ newFile }.parent_path();
+                if (!fs::exists(containingDirectory) && !fs::create_directories(containingDirectory)) {
+                    return false;
+                }
+                zf = zip_fopen_index(za, i, 0);
 
-					std::ofstream file;
-					file.open(newFile, std::ios::out | std::ios::binary);
+                std::ofstream file;
+                file.open(newFile, std::ios::out | std::ios::binary);
 
-				sum = 0;
-				while (sum != sb.size) {
-					len = zip_fread(zf, contents, bufferSize);
-					file.write(contents, len);
-					sum += len;
-				}
+                sum = 0;
+                while (sum != sb.size) {
+                    len = zip_fread(zf, contents, bufferSize);
+                    file.write(contents, len);
+                    sum += len;
+                }
 
-				file.flush();
-				file.close();
+                file.flush();
+                file.close();
 
-				zip_fclose(zf);
-			}
+                zip_fclose(zf);
+            }
         }
     }
     free(contents);
