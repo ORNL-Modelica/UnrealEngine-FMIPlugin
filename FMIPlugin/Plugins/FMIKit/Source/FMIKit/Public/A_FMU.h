@@ -35,6 +35,8 @@ public:
 	// bool bStart = false;
 	// bool bStop = false;
 	// bool bPause = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	FFilePath FMUPath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float SpeedMultiplier = 1.0f;
