@@ -70,3 +70,6 @@ Build/*/**
 
 # Cache files for the editor to use
 **/DerivedDataCache
+
+# test.fmu extraction folder
+test/

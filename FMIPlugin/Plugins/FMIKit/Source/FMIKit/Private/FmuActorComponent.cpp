@@ -2,6 +2,7 @@
 
 
 #include "FmuActorComponent.h"
+#include "unzipper.hpp"
 #include "GameFramework/Actor.h"
 
 // Sets default values for this component's properties
@@ -74,15 +75,15 @@ void UFmuActorComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		return;
 
 	mTimeNow += DeltaTime;
-	if (!(mTimeNow > mTimeLast + mStepSize/SpeedMultiplier))
+	if (!(mTimeNow > mTimeLast + mStepSize / SpeedMultiplier))
 		return;
 
-	if (mTimeNow > mStopTime/ SpeedMultiplier)
+	if (mTimeLast >= mStopTime / SpeedMultiplier)
 		return;
 
+    mTimeLast += mStepSize / SpeedMultiplier;
 	mFmu->doStep(mStepSize);
-	mTimeLast += mStepSize / SpeedMultiplier;
-	//float value = mFmu->getReal(33554432);
+		//float value = mFmu->getReal(33554432);
 	NewLocation = {(float) mFmu->getReal(33554432)* DistanceMultiplier[0] + StartLocation[0], (float) mFmu->getReal(33554433)* DistanceMultiplier[1] + StartLocation[1], (float) mFmu->getReal(33554434)* DistanceMultiplier[2] + StartLocation[2] };
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::SanitizeFloat(mTimeLast) + " " + FString::SanitizeFloat(value));
 	//UE_LOG(LogTemp, Warning, TEXT("%s, %s"), *FString::SanitizeFloat(mTimeLast), *FString::SanitizeFloat(value));

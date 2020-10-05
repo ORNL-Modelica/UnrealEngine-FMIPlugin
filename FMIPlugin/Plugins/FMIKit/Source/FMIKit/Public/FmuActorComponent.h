@@ -35,7 +35,7 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	FString mPath = "../test";
+	FFilePath mPath;
 	//FFilePath mPath;
 
 	fmikit::FMU2Slave *mFmu = nullptr;
