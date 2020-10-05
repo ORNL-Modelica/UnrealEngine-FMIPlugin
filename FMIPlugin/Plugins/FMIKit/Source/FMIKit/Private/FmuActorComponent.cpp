@@ -8,13 +8,15 @@
 #include "unzipper.hpp"
 
 
+
+
 // Sets default values for this component's properties
 UFmuActorComponent::UFmuActorComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
+	mPath.FilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../test");
 	// ...
 }
 
@@ -50,6 +52,14 @@ void UFmuActorComponent::BeginPlay()
 		FXmlFile model(fXmlFile, EConstructMethod::ConstructFromFile);
 		FXmlNode *root = model.GetRootNode();
 		FXmlNode *defaultExperiment = root->FindChildNode("DefaultExperiment");
+		FXmlNode *modelVariables = root->FindChildNode("ModelVariables");
+		TArray<FXmlNode*> nodes = modelVariables->GetChildrenNodes();
+		for (FXmlNode* node : nodes)
+		{
+			FString key = node->GetAttribute("name");
+			int value = FCString::Atoi(*node->GetAttribute("valueReference"));
+			mValRefMap.insert({ key, value });
+		}
 		mGuid = TCHAR_TO_UTF8(*root->GetAttribute("guid"));
 		mModelIdentifier = TCHAR_TO_UTF8(*root->GetAttribute("modelName"));;
 		mInstanceName = "instance";
@@ -98,9 +108,9 @@ void UFmuActorComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
     mTimeLast += mStepSize / SpeedMultiplier;
 	mFmu->doStep(mStepSize);
-	float x = mFmu->getReal(33554432) * DistanceMultiplier[0] + mStartLocation[0];
-	float y = mFmu->getReal(33554433) * DistanceMultiplier[1] + mStartLocation[1];
-	float z = mFmu->getReal(33554434) * DistanceMultiplier[2] + mStartLocation[2];
+	float x = mFmu->getReal(mValRefMap["x"]) * DistanceMultiplier[0] + mStartLocation[0];
+	float y = mFmu->getReal(mValRefMap["y"]) * DistanceMultiplier[1] + mStartLocation[1];
+	float z = mFmu->getReal(mValRefMap["z"]) * DistanceMultiplier[2] + mStartLocation[2];
 	mNewLocation = {x , y , z};
 	GetOwner()->SetActorLocation(mNewLocation);
 }

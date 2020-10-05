@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <map>
+
 #include "FMU2.h"
 #include "Engine/EngineTypes.h"
 #include "CoreMinimal.h"
@@ -49,6 +51,8 @@ private:
 	fmi2Real mTimeLast;
 	fmi2Real mTimeNow;
 	bool mLoaded = false;
+
+	std::map<FString, int> mValRefMap;
 
 	FVector mStartLocation;
 	FVector mNewLocation;
