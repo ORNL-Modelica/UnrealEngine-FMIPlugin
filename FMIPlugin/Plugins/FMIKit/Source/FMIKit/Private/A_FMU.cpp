@@ -19,26 +19,25 @@ void AA_FMU::OnConstruction(const FTransform& Transform)
 {
 	UE_LOG(LogTemp, Warning, TEXT("test"));
 
-	// Extract FMU
-	//if (mPath.FilePath.IsEmpty())
-	//{
-	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Path to .fmu is empty."));
-	//	return;
-	//}
-	FString fullPath = FPaths::ConvertRelativePathToFull(mPath.FilePath);
-	//std::string sPath = TCHAR_TO_UTF8(*fullPath);
-	//size_t lastindex = sPath.find_last_of(".");
-	//mUnzipDir = sPath.substr(0, lastindex);
-	//unzip(sPath, mUnzipDir);
-	
-	// Parse XML
+
 }
 
 // Called when the game starts or when spawned
 void AA_FMU::BeginPlay()
 {
+
+	//SetActorTickInterval(1.f);
+
 	Super::BeginPlay();
 	
+	ExtractFMU();
+	ParseXML();
+	//mFMU = new fmikit::FMU2Slave(Guid, ModelIdentifier, UnzipDir, InstanceName);
+	//mFMU->instantiate(true);
+	//mFMU->setupExperiment(true, Tolerance, StartTime, true, StopTime);
+	//mFMU->enterInitializationMode();
+	//mFMU->exitInitializationMode();
+	mLoaded = true;
 
 	UE_LOG(LogTemp, Error, TEXT("%s"), *mPath.FilePath);
 	//// We want to extract from an .fmu file
@@ -59,11 +58,7 @@ void AA_FMU::BeginPlay()
 	//}
 
 	//FString DebugLog(UnzipDir.c_str());
-	//Fmu = new fmikit::FMU2Slave(Guid, ModelIdentifier, UnzipDir, InstanceName);
-	//Fmu->instantiate(true);
-	//Fmu->setupExperiment(true, Tolerance, StartTime, true, StopTime);
-	//Fmu->enterInitializationMode();
-	//Fmu->exitInitializationMode();
+
 	//Loaded = true;
 
 }
@@ -73,5 +68,64 @@ void AA_FMU::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!mLoaded)
+		return;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hello"));
+}
+
+void AA_FMU::ExtractFMU()
+{
+	if (mPath.FilePath.IsEmpty())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Path to .fmu is empty."));
+		return;
+	}
+	std::string sPath = TCHAR_TO_UTF8(*mPath.FilePath);
+	size_t lastindex = sPath.find_last_of(".");
+	mUnzipDir = sPath.substr(0, lastindex);
+	unzip(sPath, mUnzipDir);
+}
+
+void AA_FMU::ParseXML()
+{
+	std::string xmlFile = mUnzipDir + "/modelDescription.xml";
+	FString fXmlFile = UTF8_TO_TCHAR(xmlFile.c_str());
+	FXmlFile model(fXmlFile, EConstructMethod::ConstructFromFile);
+	
+	// fmiModelDescription (root)
+	FXmlNode* root = model.GetRootNode();
+	mFMIVersion = TCHAR_TO_UTF8(*root->GetAttribute("fmiVersion"));
+	mModelIdentifier = TCHAR_TO_UTF8(*root->GetAttribute("modelName"));;
+	mGuid = TCHAR_TO_UTF8(*root->GetAttribute("guid")); 
+
+	// CoSimulation
+	// -
+
+	// DefaultExperiment
+	FXmlNode* defaultExperiment = root->FindChildNode("DefaultExperiment");
+	mStartTime = FCString::Atof(*defaultExperiment->GetAttribute("startTime"));
+	mStopTime = FCString::Atof(*defaultExperiment->GetAttribute("stopTime")) * StopTimeMultiplier;
+	mTolerance = FCString::Atof(*defaultExperiment->GetAttribute("tolerance"));;
+
+	// ModelVariables
+	FXmlNode* modelVariables = root->FindChildNode("ModelVariables");
+	TArray<FXmlNode*> nodes = modelVariables->GetChildrenNodes();
+	for (FXmlNode* node : nodes)
+	{
+		FString key = node->GetAttribute("name");
+		int value = FCString::Atoi(*node->GetAttribute("valueReference"));
+		mValRefMap.insert({ key, value });
+	}
+
+	// ModelStructure
+	// -
+
+	
+	//
+	//mInstanceName = "instance";
+
+	//mTimeLast = mStartTime;
+	//mTimeNow = mStartTime;
 }
 

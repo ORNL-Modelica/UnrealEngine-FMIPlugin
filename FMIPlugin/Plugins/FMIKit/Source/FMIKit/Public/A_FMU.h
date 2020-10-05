@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <map>
 #include "FMU2.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -27,6 +28,15 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	void ExtractFMU();
+	void ParseXML();
+	
+	std::string mUnzipDir;
+	std::string mFMIVersion;
+	std::string mModelIdentifier;
+	std::string mGuid;
+	std::map<FString, int> mValRefMap;
+	bool mLoaded = false;
 
 	//User controls
 	// float StartTime = 0.f; //update to default fmu xml
@@ -36,7 +46,7 @@ public:
 	// bool bStop = false;
 	// bool bPause = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::GetProjectFilePath(), "../text.fmu") };
+	FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() , "../test.fmu") };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float SpeedMultiplier = 1.0f;
@@ -45,4 +55,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float StopTimeMultiplier = 1.f;
 
+
+	//fmikit::FMU2Slave* mFmu = nullptr;
+
+
+	//std::string mInstanceName;
+	fmi2Real mStartTime;
+	fmi2Real mStopTime;
+	//fmi2Real mStepSize;
+	fmi2Real mTolerance;
+	//fmi2Real mTimeLast;
+	//fmi2Real mTimeNow;
 };
