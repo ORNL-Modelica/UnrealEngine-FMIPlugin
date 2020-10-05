@@ -36,7 +36,7 @@ public:
 	// bool bStop = false;
 	// bool bPause = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FFilePath FMUPath;
+	FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::GetProjectFilePath(), "../text.fmu") };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	float SpeedMultiplier = 1.0f;
