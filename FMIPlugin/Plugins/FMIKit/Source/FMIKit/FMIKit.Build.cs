@@ -53,10 +53,13 @@ public class FMIKit : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
+				"Core",
 				"CoreUObject",
 				"Engine",
+				"InputCore",
 				"Slate",
 				"SlateCore",
+				"XmlParser",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

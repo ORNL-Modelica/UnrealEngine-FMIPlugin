@@ -2,8 +2,11 @@
 
 
 #include "FmuActorComponent.h"
-#include "unzipper.hpp"
 #include "GameFramework/Actor.h"
+
+#include "XmlFile.h"
+#include "unzipper.hpp"
+
 
 // Sets default values for this component's properties
 UFmuActorComponent::UFmuActorComponent()
@@ -26,11 +29,13 @@ void UFmuActorComponent::BeginPlay()
 	mStartLocation = GetOwner()->GetActorLocation();
 	mNewLocation = mStartLocation;
 
-	UE_LOG(LogTemp, Warning, TEXT("DemoText"));
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("This is an on screen message!"));
-
 	// Extract from an .fmu file
 	{
+		if (mPath.FilePath.IsEmpty())
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Path to .fmu is empty."));
+			return;
+		}
 		FString fullPath = FPaths::ConvertRelativePathToFull(mPath.FilePath);
 		std::string sPath = TCHAR_TO_UTF8(*fullPath);
 		size_t lastindex = sPath.find_last_of(".");
@@ -40,13 +45,18 @@ void UFmuActorComponent::BeginPlay()
 
 	// These should be populated from the extracted ModelDescription.xml
 	{
-		mGuid = "{1d19fee2-02f1-4ae7-b863-b6f380f15015}";
-		mModelIdentifier = "test";
+		std::string xmlFile = mUnzipDir + "/modelDescription.xml";
+		FString fXmlFile = UTF8_TO_TCHAR(xmlFile.c_str());
+		FXmlFile model(fXmlFile, EConstructMethod::ConstructFromFile);
+		FXmlNode *root = model.GetRootNode();
+		FXmlNode *defaultExperiment = root->FindChildNode("DefaultExperiment");
+		mGuid = TCHAR_TO_UTF8(*root->GetAttribute("guid"));
+		mModelIdentifier = TCHAR_TO_UTF8(*root->GetAttribute("modelName"));;
 		mInstanceName = "instance";
-		mStartTime = 0.;
-		mStopTime = 1.* StopTimeMultiplier;
+		mStartTime = FCString::Atof(*defaultExperiment->GetAttribute("startTime"));
+		mStopTime = FCString::Atof(*defaultExperiment->GetAttribute("stopTime")) * StopTimeMultiplier;
 		mStepSize = 0.1;
-		mTolerance = 0.0001;
+		mTolerance = FCString::Atof(*defaultExperiment->GetAttribute("tolerance"));;
 		mTimeLast = mStartTime;
 		mTimeNow = mStartTime;
 	}
