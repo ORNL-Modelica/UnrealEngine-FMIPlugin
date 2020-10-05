@@ -23,15 +23,20 @@ void UFmuActorComponent::BeginPlay()
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UFmuActorComponent::BeginPlay()"));
 	Super::BeginPlay();
 
-	StartLocation = GetOwner()->GetActorLocation();
-	NewLocation = StartLocation;
+	mStartLocation = GetOwner()->GetActorLocation();
+	mNewLocation = mStartLocation;
 
 	UE_LOG(LogTemp, Warning, TEXT("DemoText"));
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("This is an on screen message!"));
 
-	// We want to extract from an .fmu file
-	FString fullPath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + mPath);
-	mUnzipDir = std::string(TCHAR_TO_UTF8(*fullPath));
+	// Extract from an .fmu file
+	{
+		FString fullPath = FPaths::ConvertRelativePathToFull(mPath.FilePath);
+		std::string sPath = TCHAR_TO_UTF8(*fullPath);
+		size_t lastindex = sPath.find_last_of(".");
+		mUnzipDir = sPath.substr(0, lastindex);
+		unzip(sPath, mUnzipDir);
+	}
 
 	// These should be populated from the extracted ModelDescription.xml
 	{
@@ -83,11 +88,10 @@ void UFmuActorComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
     mTimeLast += mStepSize / SpeedMultiplier;
 	mFmu->doStep(mStepSize);
-		//float value = mFmu->getReal(33554432);
-	NewLocation = {(float) mFmu->getReal(33554432)* DistanceMultiplier[0] + StartLocation[0], (float) mFmu->getReal(33554433)* DistanceMultiplier[1] + StartLocation[1], (float) mFmu->getReal(33554434)* DistanceMultiplier[2] + StartLocation[2] };
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::SanitizeFloat(mTimeLast) + " " + FString::SanitizeFloat(value));
-	//UE_LOG(LogTemp, Warning, TEXT("%s, %s"), *FString::SanitizeFloat(mTimeLast), *FString::SanitizeFloat(value));
-
-	GetOwner()->SetActorLocation(NewLocation);
+	float x = mFmu->getReal(33554432) * DistanceMultiplier[0] + mStartLocation[0];
+	float y = mFmu->getReal(33554433) * DistanceMultiplier[1] + mStartLocation[1];
+	float z = mFmu->getReal(33554434) * DistanceMultiplier[2] + mStartLocation[2];
+	mNewLocation = {x , y , z};
+	GetOwner()->SetActorLocation(mNewLocation);
 }
 

@@ -36,7 +36,6 @@ public:
 private:
 	UPROPERTY(EditAnywhere)
 	FFilePath mPath;
-	//FFilePath mPath;
 
 	fmikit::FMU2Slave *mFmu = nullptr;
 	std::string mUnzipDir;
@@ -51,6 +50,6 @@ private:
 	fmi2Real mTimeNow;
 	bool mLoaded = false;
 
-	FVector StartLocation;
-	FVector NewLocation;
+	FVector mStartLocation;
+	FVector mNewLocation;
 };
