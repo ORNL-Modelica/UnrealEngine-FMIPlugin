@@ -71,5 +71,6 @@ Build/*/**
 # Cache files for the editor to use
 **/DerivedDataCache
 
-# test.fmu extraction folder
+# .fmu extraction folders
 test/
+BouncingBall/

@@ -10,57 +10,33 @@
 AA_FMU::AA_FMU()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+    PrimaryActorTick.bCanEverTick = true;
+    ExtractFMU();
+    ParseXML();
 }
 
-//// Called when actor is created or any updates are made to it
+// Called when actor is created or any updates are made to it
 void AA_FMU::OnConstruction(const FTransform& Transform)
 {
 	UE_LOG(LogTemp, Warning, TEXT("test"));
-
-
+	ExtractFMU();
+	ParseXML();
 }
 
 // Called when the game starts or when spawned
 void AA_FMU::BeginPlay()
 {
-
 	//SetActorTickInterval(1.f);
-
 	Super::BeginPlay();
 	
-	ExtractFMU();
-	ParseXML();
-	//mFMU = new fmikit::FMU2Slave(Guid, ModelIdentifier, UnzipDir, InstanceName);
-	//mFMU->instantiate(true);
-	//mFMU->setupExperiment(true, Tolerance, StartTime, true, StopTime);
-	//mFMU->enterInitializationMode();
-	//mFMU->exitInitializationMode();
+	mFmu = new fmikit::FMU2Slave(mGuid, mModelIdentifier, mUnzipDir, mInstanceName);
+    mFmu->instantiate(true);
+    mFmu->setupExperiment(true, mTolerance, mStartTime, true, mStopTime);
+    mFmu->enterInitializationMode();
+    mFmu->exitInitializationMode();
 	mLoaded = true;
 
 	UE_LOG(LogTemp, Error, TEXT("%s"), *mPath.FilePath);
-	//// We want to extract from an .fmu file
-	//FString fullPath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + Path);
-	//UnzipDir = std::string(TCHAR_TO_UTF8(*fullPath));
-
-	//// These should be populated from the extracted ModelDescription.xml
-	//{
-	//	Guid = "{1d19fee2-02f1-4ae7-b863-b6f380f15015}";
-	//	ModelIdentifier = "test";
-	//	InstanceName = "instance";
-	//	StartTime = 0.;
-	//	StopTime = 1. * StopTimeMultiplier;
-	//	StepSize = 0.1;
-	//	Tolerance = 0.0001;
-	//	TimeLast = mStartTime;
-	//	TimeNow = mStartTime;
-	//}
-
-	//FString DebugLog(UnzipDir.c_str());
-
-	//Loaded = true;
-
 }
 
 // Called every frame
@@ -105,7 +81,7 @@ void AA_FMU::ParseXML()
 	// DefaultExperiment
 	FXmlNode* defaultExperiment = root->FindChildNode("DefaultExperiment");
 	mStartTime = FCString::Atof(*defaultExperiment->GetAttribute("startTime"));
-	mStopTime = FCString::Atof(*defaultExperiment->GetAttribute("stopTime")) * StopTimeMultiplier;
+	mStopTime = FCString::Atof(*defaultExperiment->GetAttribute("stopTime")) * mStopTimeMultiplier;
 	mTolerance = FCString::Atof(*defaultExperiment->GetAttribute("tolerance"));;
 
 	// ModelVariables
@@ -113,19 +89,14 @@ void AA_FMU::ParseXML()
 	TArray<FXmlNode*> nodes = modelVariables->GetChildrenNodes();
 	for (FXmlNode* node : nodes)
 	{
-		FString key = node->GetAttribute("name");
-		int value = FCString::Atoi(*node->GetAttribute("valueReference"));
-		mValRefMap.insert({ key, value });
+        struct FmuAttributes att;
+        att.key = node->GetAttribute("name");
+        att.value = FCString::Atoi(*node->GetAttribute("valueReference"));
+		//mValRefMap.AddRow(FName(*att.key),att);
 	}
 
 	// ModelStructure
 	// -
 
-	
-	//
-	//mInstanceName = "instance";
-
-	//mTimeLast = mStartTime;
-	//mTimeNow = mStartTime;
 }
 

@@ -2,11 +2,23 @@
 
 #pragma once
 
-#include <map>
+#include "Containers/Map.h"
+#include "Engine/DataTable.h"
 #include "FMU2.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "A_FMU.generated.h"
+
+USTRUCT(BlueprintType)
+struct FmuAttributes : public FTableRowBase
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+        FString key;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+        int value;
+};
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class FMIKIT_API AA_FMU : public AActor
@@ -21,8 +33,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	//// Called when actor is created or any updates are made to it
-	//virtual void OnConstruction() override;
+	// Called when actor is created or any updates are made to it
+	// virtual void OnConstruction() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 public:	
@@ -31,39 +43,34 @@ public:
 	void ExtractFMU();
 	void ParseXML();
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	    FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../test.fmu") };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	    float mSpeedMultiplier = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	    FVector mDistanceMultiplier = { 1.f,1.f,1.f };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	    float mStopTimeMultiplier = 1.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+        FDataTableRowHandle mKeys;
+
+private:
+	fmikit::FMU2Slave *mFmu = nullptr;
+
+    //UDataTable mValRefMap;
 	std::string mUnzipDir;
-	std::string mFMIVersion;
-	std::string mModelIdentifier;
 	std::string mGuid;
-	std::map<FString, int> mValRefMap;
+	std::string mModelIdentifier;
+    std::string mFMIVersion;
+	std::string mInstanceName = "instance";
+	fmi2Real mStartTime = 0.;
+	fmi2Real mStopTime = 1.;
+	fmi2Real mStepSize = 1.;
+	fmi2Real mTolerance = 1e-4;
+	fmi2Real mTimeLast = 0;
+	fmi2Real mTimeNow = 0;
 	bool mLoaded = false;
 
-	//User controls
-	// float StartTime = 0.f; //update to default fmu xml
-	// float StopTime = 1.f; // update to default fmu xml
-	// bool bRestart = false;
-	// bool bStart = false;
-	// bool bStop = false;
-	// bool bPause = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() , "../test.fmu") };
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	float SpeedMultiplier = 1.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	FVector DistanceMultiplier = { 1.f,1.f,1.f };
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	float StopTimeMultiplier = 1.f;
-
-
-	//fmikit::FMU2Slave* mFmu = nullptr;
-
-
-	//std::string mInstanceName;
-	fmi2Real mStartTime;
-	fmi2Real mStopTime;
-	//fmi2Real mStepSize;
-	fmi2Real mTolerance;
-	//fmi2Real mTimeLast;
-	//fmi2Real mTimeNow;
+	FVector mStartLocation;
+	FVector mNewLocation;
 };
