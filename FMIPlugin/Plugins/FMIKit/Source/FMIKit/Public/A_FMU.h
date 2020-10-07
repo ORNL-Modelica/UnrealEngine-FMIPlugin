@@ -30,6 +30,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void ExtractFMU();
 	void ParseXML();
+    float GetReal(unsigned int valRef);
+    void DoStep(float time);
+
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	    FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../test.fmu") };

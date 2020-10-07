@@ -32,7 +32,9 @@ void AA_FMU::BeginPlay()
 	mFmu = new fmikit::FMU2Slave(mGuid, mModelIdentifier, mUnzipDir, mInstanceName);
     mFmu->instantiate(true);
     mFmu->setupExperiment(true, mTolerance, mStartTime, true, mStopTime);
+    // More complex models may need to change values here
     mFmu->enterInitializationMode();
+    // or here
     mFmu->exitInitializationMode();
 	mLoaded = true;
 
@@ -100,5 +102,15 @@ void AA_FMU::ParseXML()
 	// ModelStructure
 	// -
 
+}
+
+float AA_FMU::GetReal(unsigned int valRef)
+{
+    return mFmu->getReal(valRef);
+}
+
+void AA_FMU::DoStep(float time)
+{
+    mFmu->doStep(time);
 }
 
