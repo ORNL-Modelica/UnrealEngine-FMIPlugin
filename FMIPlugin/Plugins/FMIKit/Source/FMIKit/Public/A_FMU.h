@@ -3,22 +3,10 @@
 #pragma once
 
 #include "Containers/Map.h"
-#include "Engine/DataTable.h"
 #include "FMU2.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "A_FMU.generated.h"
-
-USTRUCT(BlueprintType)
-struct FmuAttributes : public FTableRowBase
-{
-    GENERATED_BODY()
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-        FString key;
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-        int value;
-};
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class FMIKIT_API AA_FMU : public AActor
@@ -52,12 +40,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	    float mStopTimeMultiplier = 1.f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-        FDataTableRowHandle mKeys;
+        TMap<FString, int> mValRefMap;
 
 private:
 	fmikit::FMU2Slave *mFmu = nullptr;
 
-    //UDataTable mValRefMap;
 	std::string mUnzipDir;
 	std::string mGuid;
 	std::string mModelIdentifier;

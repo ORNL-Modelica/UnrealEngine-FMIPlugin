@@ -47,7 +47,7 @@ void AA_FMU::Tick(float DeltaTime)
 	if (!mLoaded)
 		return;
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hello"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hello"));
 }
 
 void AA_FMU::ExtractFMU()
@@ -65,6 +65,9 @@ void AA_FMU::ExtractFMU()
 
 void AA_FMU::ParseXML()
 {
+    // Clear existing map
+    mValRefMap.Empty();
+
 	std::string xmlFile = mUnzipDir + "/modelDescription.xml";
 	FString fXmlFile = UTF8_TO_TCHAR(xmlFile.c_str());
 	FXmlFile model(fXmlFile, EConstructMethod::ConstructFromFile);
@@ -89,10 +92,9 @@ void AA_FMU::ParseXML()
 	TArray<FXmlNode*> nodes = modelVariables->GetChildrenNodes();
 	for (FXmlNode* node : nodes)
 	{
-        struct FmuAttributes att;
-        att.key = node->GetAttribute("name");
-        att.value = FCString::Atoi(*node->GetAttribute("valueReference"));
-		//mValRefMap.AddRow(FName(*att.key),att);
+        FString key = node->GetAttribute("name");
+        int value = FCString::Atoi(*node->GetAttribute("valueReference"));
+		mValRefMap.Add(key, value);
 	}
 
 	// ModelStructure
