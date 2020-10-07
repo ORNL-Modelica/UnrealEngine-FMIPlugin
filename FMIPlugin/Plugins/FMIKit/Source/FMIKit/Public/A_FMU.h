@@ -30,18 +30,18 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void ExtractFMU();
 	void ParseXML();
-    float GetReal(unsigned int valRef);
+
+    UFUNCTION(BlueprintCallable)
+    float GetReal(int valRef);
+    UFUNCTION(BlueprintCallable)
     void DoStep(float time);
 
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	    FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../test.fmu") };
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	    float mSpeedMultiplier = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	    FVector mDistanceMultiplier = { 1.f,1.f,1.f };
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	    float mStopTimeMultiplier = 1.f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
         TMap<FString, int> mValRefMap;
 
@@ -57,10 +57,5 @@ private:
 	fmi2Real mStopTime = 1.;
 	fmi2Real mStepSize = 1.;
 	fmi2Real mTolerance = 1e-4;
-	fmi2Real mTimeLast = 0;
-	fmi2Real mTimeNow = 0;
 	bool mLoaded = false;
-
-	FVector mStartLocation;
-	FVector mNewLocation;
 };

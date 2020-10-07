@@ -44,10 +44,10 @@ void AA_FMU::BeginPlay()
 // Called every frame
 void AA_FMU::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	//Super::Tick(DeltaTime);
 
-	if (!mLoaded)
-		return;
+	//if (!mLoaded)
+	//	return;
 
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hello"));
 }
@@ -86,8 +86,8 @@ void AA_FMU::ParseXML()
 	// DefaultExperiment
 	FXmlNode* defaultExperiment = root->FindChildNode("DefaultExperiment");
 	mStartTime = FCString::Atof(*defaultExperiment->GetAttribute("startTime"));
-	mStopTime = FCString::Atof(*defaultExperiment->GetAttribute("stopTime")) * mStopTimeMultiplier;
-	mTolerance = FCString::Atof(*defaultExperiment->GetAttribute("tolerance"));;
+	mStopTime = FCString::Atof(*defaultExperiment->GetAttribute("stopTime"));
+	mTolerance = FCString::Atof(*defaultExperiment->GetAttribute("tolerance"));
 
 	// ModelVariables
 	FXmlNode* modelVariables = root->FindChildNode("ModelVariables");
@@ -104,7 +104,7 @@ void AA_FMU::ParseXML()
 
 }
 
-float AA_FMU::GetReal(unsigned int valRef)
+float AA_FMU::GetReal(int valRef)
 {
     return mFmu->getReal(valRef);
 }
