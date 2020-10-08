@@ -12,11 +12,13 @@ AA_FMU::AA_FMU()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 	{
-		FFilePath path = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../valRefMap.csv") };
-		static ConstructorHelpers::FObjectFinder<UDataTable> temp(*path.FilePath);
-		mValRefMap = temp.Object;
-		mRow.DataTable = mValRefMap;
+		//FFilePath path = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../valRefMap.csv") };
+		//static ConstructorHelpers::FObjectFinder<UDataTable> temp(*FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../valRefMap.csv"));
+		//mValRefMap.ValueReference = 123456;
+		//mValRefMap = temp.Object;
+		//mRow.DataTable = mValRefMap;
 	}
+
     ExtractFMU();
     ParseXML();
 }
@@ -33,13 +35,8 @@ void AA_FMU::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
 	Super::PostEditChangeProperty(e);
 	
-	FName temp = e.MemberProperty->GetFName(); //e.GetPropertyName();
-
-	int32 i = 0;
-	//FString tempString = temp.ToString();
-	if (temp.ToString() == TEXT("mPath"))
+	if (e.MemberProperty->GetFName().ToString() == TEXT("mPath"))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("PostEdit function called for mPath"));
 		ExtractFMU();
 		ParseXML();
 	}
@@ -55,24 +52,24 @@ void AA_FMU::BeginPlay()
 	mFmu = new fmikit::FMU2Slave(mGuid, mModelIdentifier, mUnzipDir, mInstanceName);
     mFmu->instantiate(true);
     mFmu->setupExperiment(true, mTolerance, mStartTime, true, mStopTime);
-    // More complex models may need to change values here
     mFmu->enterInitializationMode();
-    // or here
     mFmu->exitInitializationMode();
 	mLoaded = true;
 
-	UE_LOG(LogTemp, Error, TEXT("%s"), *mPath.FilePath);
+	UE_LOG(LogTemp, Display, TEXT("Initialization of FMU complete: %s"), *mPath.FilePath);
 }
 
 // Called every frame
 void AA_FMU::Tick(float DeltaTime)
 {
-	//Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime);
 
-	//if (!mLoaded)
-	//	return;
+	if (!mLoaded)
+		return;
 
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hello"));
+	//UE_LOG(LogTemp, Warning, TEXT("%i"), mModelVariablesDT.ValueReference);
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hello"));
 }
 
 void AA_FMU::ExtractFMU()
@@ -91,7 +88,7 @@ void AA_FMU::ExtractFMU()
 void AA_FMU::ParseXML()
 {
     // Clear existing map
-    mValRefMap->EmptyTable();
+    //mValRefMap->EmptyTable();
 
 	std::string xmlFile = mUnzipDir + "/modelDescription.xml";
 	FString fXmlFile = UTF8_TO_TCHAR(xmlFile.c_str());
@@ -115,22 +112,31 @@ void AA_FMU::ParseXML()
 	// ModelVariables
 	FXmlNode* modelVariables = root->FindChildNode("ModelVariables");
 	TArray<FXmlNode*> nodes = modelVariables->GetChildrenNodes();
-	if (mValRefMap != nullptr) {
-		for (FXmlNode* node : nodes)
-		{
-			struct FVals nodeVal;
-			nodeVal.val = FCString::Atoi(*node->GetAttribute("valueReference"));
-			FString key = node->GetAttribute("name");
-			mValRefMap->AddRow(FName(key), nodeVal);
-		}
+
+	// Clear existing values in TMap
+	TArray<FName> Keys;
+	mModelVariables.GetKeys(Keys);
+	for (FName Key : Keys)
+	{
+		mModelVariables.Remove(Key);
+	}
+	mModelVariables.Compact();
+
+	// Populate TMap
+	for (FXmlNode* node : nodes)
+	{
+		struct FModelVariables ModelVariables;
+		ModelVariables.ValueReference = FCString::Atoi(*node->GetAttribute("valueReference"));
+		FString key = node->GetAttribute("name");
+		mModelVariables.Add(FName(key), ModelVariables);
+		// may need to add logic to handle non float variables. Ignore them or assign them in some other way.
 	}
 
 	// ModelStructure
 	// -
 
-
-	// Create/Override DataTable
-
+	UE_LOG(LogTemp, Display, TEXT("XML parsing complete for: %s"), UTF8_TO_TCHAR(mModelIdentifier.c_str()));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("XML parsing complete for: %s"), *tests); // Does not work in VS2019
 }
 
 float AA_FMU::GetReal(int valRef)

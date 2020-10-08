@@ -10,12 +10,14 @@
 #include "A_FMU.generated.h"
 
 USTRUCT()
-struct FVals : public FTableRowBase
+struct FModelVariables : public FTableRowBase
 {
-	GENERATED_BODY(BlueprintType)
+	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
-		int val;
+public:
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int ValueReference;
+
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -32,17 +34,16 @@ protected:
 	virtual void BeginPlay() override;
 
 	// Called when actor is created or any updates are made to it
-	// virtual void OnConstruction() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
+
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
-#if WITH_EDITOR
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-#endif
-
 	void ExtractFMU();
 	void ParseXML();
 
@@ -58,9 +59,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	    FVector mDistanceMultiplier = { 1.f,1.f,1.f };
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-		FDataTableRowHandle mRow;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-        UDataTable *mValRefMap;
+		TMap<FName, FModelVariables> mModelVariables;
 
 private:
 	fmikit::FMU2Slave *mFmu = nullptr;
@@ -74,5 +73,5 @@ private:
 	fmi2Real mStopTime = 1.;
 	fmi2Real mStepSize = 1.;
 	fmi2Real mTolerance = 1e-4;
-	bool mLoaded = false;
+	bool mLoaded = false;	
 };
