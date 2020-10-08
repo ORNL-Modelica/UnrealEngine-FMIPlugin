@@ -3,10 +3,20 @@
 #pragma once
 
 #include "Containers/Map.h"
+#include "Engine/DataTable.h"
 #include "FMU2.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "A_FMU.generated.h"
+
+USTRUCT()
+struct FVals : public FTableRowBase
+{
+	GENERATED_BODY(BlueprintType)
+
+	UPROPERTY()
+		int val;
+};
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class FMIKIT_API AA_FMU : public AActor
@@ -28,6 +38,11 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
+
 	void ExtractFMU();
 	void ParseXML();
 
@@ -42,8 +57,10 @@ public:
 	    float mSpeedMultiplier = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	    FVector mDistanceMultiplier = { 1.f,1.f,1.f };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+		FDataTableRowHandle mRow;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-        TMap<FString, int> mValRefMap;
+        UDataTable *mValRefMap;
 
 private:
 	fmikit::FMU2Slave *mFmu = nullptr;

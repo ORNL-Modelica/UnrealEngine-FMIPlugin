@@ -11,6 +11,12 @@ AA_FMU::AA_FMU()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
+	{
+		FFilePath path = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../valRefMap.csv") };
+		static ConstructorHelpers::FObjectFinder<UDataTable> temp(*path.FilePath);
+		mValRefMap = temp.Object;
+		mRow.DataTable = mValRefMap;
+	}
     ExtractFMU();
     ParseXML();
 }
@@ -18,10 +24,27 @@ AA_FMU::AA_FMU()
 // Called when actor is created or any updates are made to it
 void AA_FMU::OnConstruction(const FTransform& Transform)
 {
-	UE_LOG(LogTemp, Warning, TEXT("test"));
-	ExtractFMU();
-	ParseXML();
+	//UE_LOG(LogTemp, Warning, TEXT("test"));
+
 }
+
+#if WITH_EDITOR
+void AA_FMU::PostEditChangeProperty(struct FPropertyChangedEvent& e)
+{
+	Super::PostEditChangeProperty(e);
+	
+	FName temp = e.MemberProperty->GetFName(); //e.GetPropertyName();
+
+	int32 i = 0;
+	//FString tempString = temp.ToString();
+	if (temp.ToString() == TEXT("mPath"))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("PostEdit function called for mPath"));
+		ExtractFMU();
+		ParseXML();
+	}
+}
+#endif
 
 // Called when the game starts or when spawned
 void AA_FMU::BeginPlay()
@@ -68,7 +91,7 @@ void AA_FMU::ExtractFMU()
 void AA_FMU::ParseXML()
 {
     // Clear existing map
-    mValRefMap.Empty();
+    mValRefMap->EmptyTable();
 
 	std::string xmlFile = mUnzipDir + "/modelDescription.xml";
 	FString fXmlFile = UTF8_TO_TCHAR(xmlFile.c_str());
@@ -92,15 +115,21 @@ void AA_FMU::ParseXML()
 	// ModelVariables
 	FXmlNode* modelVariables = root->FindChildNode("ModelVariables");
 	TArray<FXmlNode*> nodes = modelVariables->GetChildrenNodes();
-	for (FXmlNode* node : nodes)
-	{
-        FString key = node->GetAttribute("name");
-        int value = FCString::Atoi(*node->GetAttribute("valueReference"));
-		mValRefMap.Add(key, value);
+	if (mValRefMap != nullptr) {
+		for (FXmlNode* node : nodes)
+		{
+			struct FVals nodeVal;
+			nodeVal.val = FCString::Atoi(*node->GetAttribute("valueReference"));
+			FString key = node->GetAttribute("name");
+			mValRefMap->AddRow(FName(key), nodeVal);
+		}
 	}
 
 	// ModelStructure
 	// -
+
+
+	// Create/Override DataTable
 
 }
 
