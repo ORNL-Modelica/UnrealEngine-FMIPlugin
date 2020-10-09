@@ -40,6 +40,11 @@ void AA_FMU::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 		ExtractFMU();
 		ParseXML();
 	}
+
+	if (mAutoSimulateTick && e.MemberProperty->GetFName().ToString() == TEXT("mStoreVariables"))
+	{
+		InstantiateResultsMap();
+	}
 }
 #endif
 
@@ -64,12 +69,24 @@ void AA_FMU::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!mLoaded)
-		return;
+	// This is an option to let the user have an auto simulated model instead of blueprint control. Having issues
+	//if (mAutoSimulateTick)
+	//{
+	//	mTimeNow += DeltaTime;
+	//	if (!(mTimeNow > mTimeLast + mStepSize / mSpeedMultiplier))
+	//		return;
 
-	//UE_LOG(LogTemp, Warning, TEXT("%i"), mModelVariablesDT.ValueReference);
+	//	if (mTimeLast >= mStopTime / mSpeedMultiplier)
+	//		return;
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Hello"));
+	//	mTimeLast += mStepSize / mSpeedMultiplier;
+	//	mFmu->doStep(mStepSize);
+
+	//	for (FString Key : mStoreVariables)
+	//	{
+	//		mResults[Key]= mFmu->getReal(mModelVariables[Key].ValueReference);
+	//	}
+	//}
 }
 
 void AA_FMU::ExtractFMU()
@@ -139,13 +156,31 @@ void AA_FMU::ParseXML()
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("XML parsing complete for: %s"), *tests); // Does not work in VS2019
 }
 
-float AA_FMU::GetReal(int valRef)
+float AA_FMU::GetReal(FName Name)
 {
-    return mFmu->getReal(valRef);
+    return mFmu->getReal(mModelVariables[Name].ValueReference);
 }
 
-void AA_FMU::DoStep(float time)
+void AA_FMU::DoStep(float StepSize)
 {
-    mFmu->doStep(time);
+    mFmu->doStep(StepSize);
 }
 
+void AA_FMU::InstantiateResultsMap()
+{
+	// Clear existing values in TMap
+	TArray<FString> Keys;
+	mResults.GetKeys(Keys);
+	for (FString Key : Keys)
+	{
+		mResults.Remove(Key);
+	}
+	mResults.Compact();
+
+
+	// Populate TMap
+	for (FString Key : mStoreVariables)
+	{
+		mResults.Add(Key);
+	}
+}

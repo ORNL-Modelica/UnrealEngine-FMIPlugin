@@ -15,7 +15,7 @@ struct FModelVariables : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 public:
-		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		int ValueReference;
 
 };
@@ -46,20 +46,25 @@ public:
 	
 	void ExtractFMU();
 	void ParseXML();
+	void InstantiateResultsMap();
 
     UFUNCTION(BlueprintCallable)
-    float GetReal(int valRef);
+    float GetReal(FName Name);
     UFUNCTION(BlueprintCallable)
-    void DoStep(float time);
+    void DoStep(float StepSize);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+		bool mAutoSimulateTick = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	    FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../test.fmu") };
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	    float mSpeedMultiplier = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	    FVector mDistanceMultiplier = { 1.f,1.f,1.f };
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Settings")
 		TMap<FName, FModelVariables> mModelVariables;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+		TArray<FString> mStoreVariables;
 
 private:
 	fmikit::FMU2Slave *mFmu = nullptr;
@@ -74,4 +79,8 @@ private:
 	fmi2Real mStepSize = 1.;
 	fmi2Real mTolerance = 1e-4;
 	bool mLoaded = false;	
+
+	fmi2Real mTimeLast;
+	fmi2Real mTimeNow;
+	TMap<FString, float> mResults;
 };
