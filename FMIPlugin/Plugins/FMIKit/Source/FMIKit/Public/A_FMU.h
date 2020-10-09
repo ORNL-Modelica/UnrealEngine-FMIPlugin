@@ -77,7 +77,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		float mTolerance = 1e-4;
 
-	UPROPERTY(BlueprintReadWrite, Category = "FMU Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mPause = false;
 
 private:
