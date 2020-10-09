@@ -49,22 +49,36 @@ public:
 	void InstantiateResultsMap();
 
     UFUNCTION(BlueprintCallable)
-    float GetReal(FName Name);
+    float GetReal(FString Name);
     UFUNCTION(BlueprintCallable)
     void DoStep(float StepSize);
+	UFUNCTION(BlueprintCallable)
+	bool ControlStep(float DeltaTime);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mAutoSimulateTick = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 	    FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../test.fmu") };
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 	    float mSpeedMultiplier = 1.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	    FVector mDistanceMultiplier = { 1.f,1.f,1.f };
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Settings")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		TMap<FName, FModelVariables> mModelVariables;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		TArray<FString> mStoreVariables;
+	UPROPERTY(BlueprintReadWrite, Category = "FMU Settings")
+	TMap<FString, float> mResults;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
+		float mStartTime = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
+		float mStopTime = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
+		float mStepSize = 0.1f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
+		float mTolerance = 1e-4;
+
+	UPROPERTY(BlueprintReadWrite, Category = "FMU Settings")
+		bool mPause = false;
 
 private:
 	fmikit::FMU2Slave *mFmu = nullptr;
@@ -74,13 +88,10 @@ private:
 	std::string mModelIdentifier;
     std::string mFMIVersion;
 	std::string mInstanceName = "instance";
-	fmi2Real mStartTime = 0.;
-	fmi2Real mStopTime = 1.;
-	fmi2Real mStepSize = 1.;
-	fmi2Real mTolerance = 1e-4;
+
 	bool mLoaded = false;	
 
 	fmi2Real mTimeLast;
 	fmi2Real mTimeNow;
-	TMap<FString, float> mResults;
+	
 };

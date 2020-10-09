@@ -11,16 +11,10 @@ AA_FMU::AA_FMU()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
-	{
-		//FFilePath path = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../valRefMap.csv") };
-		//static ConstructorHelpers::FObjectFinder<UDataTable> temp(*FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../valRefMap.csv"));
-		//mValRefMap.ValueReference = 123456;
-		//mValRefMap = temp.Object;
-		//mRow.DataTable = mValRefMap;
-	}
 
     ExtractFMU();
     ParseXML();
+	mResults.Empty();
 }
 
 // Called when actor is created or any updates are made to it
@@ -43,8 +37,13 @@ void AA_FMU::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 
 	if (mAutoSimulateTick && e.MemberProperty->GetFName().ToString() == TEXT("mStoreVariables"))
 	{
-		InstantiateResultsMap();
+		mResults.Empty();
 	}
+
+	//if (e.MemberProperty->GetFName().ToString() == TEXT("mPause"))
+	//{
+	//	mPause = !mPause;
+	//}
 }
 #endif
 
@@ -70,23 +69,29 @@ void AA_FMU::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// This is an option to let the user have an auto simulated model instead of blueprint control. Having issues
-	//if (mAutoSimulateTick)
-	//{
-	//	mTimeNow += DeltaTime;
-	//	if (!(mTimeNow > mTimeLast + mStepSize / mSpeedMultiplier))
-	//		return;
-
-	//	if (mTimeLast >= mStopTime / mSpeedMultiplier)
-	//		return;
-
-	//	mTimeLast += mStepSize / mSpeedMultiplier;
-	//	mFmu->doStep(mStepSize);
-
-	//	for (FString Key : mStoreVariables)
-	//	{
-	//		mResults[Key]= mFmu->getReal(mModelVariables[Key].ValueReference);
-	//	}
-	//}
+	if (mAutoSimulateTick && !mPause)
+	{
+		if (ControlStep(DeltaTime))
+		{
+			mFmu->doStep(mStepSize);
+		}
+		else
+		{
+			return;
+		}
+		
+		for (FString Key : mStoreVariables)
+		{
+			if (mResults.Contains(Key))
+			{
+				mResults[Key] = mFmu->getReal(mModelVariables[FName(Key)].ValueReference);
+			}
+			else
+			{
+				mResults.Add(Key, mFmu->getReal(mModelVariables[FName(Key)].ValueReference));
+			}
+		}
+	}
 }
 
 void AA_FMU::ExtractFMU()
@@ -104,9 +109,6 @@ void AA_FMU::ExtractFMU()
 
 void AA_FMU::ParseXML()
 {
-    // Clear existing map
-    //mValRefMap->EmptyTable();
-
 	std::string xmlFile = mUnzipDir + "/modelDescription.xml";
 	FString fXmlFile = UTF8_TO_TCHAR(xmlFile.c_str());
 	FXmlFile model(fXmlFile, EConstructMethod::ConstructFromFile);
@@ -131,13 +133,7 @@ void AA_FMU::ParseXML()
 	TArray<FXmlNode*> nodes = modelVariables->GetChildrenNodes();
 
 	// Clear existing values in TMap
-	TArray<FName> Keys;
-	mModelVariables.GetKeys(Keys);
-	for (FName Key : Keys)
-	{
-		mModelVariables.Remove(Key);
-	}
-	mModelVariables.Compact();
+	mModelVariables.Empty();
 
 	// Populate TMap
 	for (FXmlNode* node : nodes)
@@ -146,7 +142,7 @@ void AA_FMU::ParseXML()
 		ModelVariables.ValueReference = FCString::Atoi(*node->GetAttribute("valueReference"));
 		FString key = node->GetAttribute("name");
 		mModelVariables.Add(FName(key), ModelVariables);
-		// may need to add logic to handle non float variables. Ignore them or assign them in some other way.
+		// may need to add logic to handle non integer values if needeed in the future. Ignore them or assign them in some other way.
 	}
 
 	// ModelStructure
@@ -156,9 +152,9 @@ void AA_FMU::ParseXML()
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("XML parsing complete for: %s"), *tests); // Does not work in VS2019
 }
 
-float AA_FMU::GetReal(FName Name)
+float AA_FMU::GetReal(FString Name)
 {
-    return mFmu->getReal(mModelVariables[Name].ValueReference);
+    return mFmu->getReal(mModelVariables[FName(Name)].ValueReference);
 }
 
 void AA_FMU::DoStep(float StepSize)
@@ -166,21 +162,19 @@ void AA_FMU::DoStep(float StepSize)
     mFmu->doStep(StepSize);
 }
 
-void AA_FMU::InstantiateResultsMap()
+bool AA_FMU::ControlStep(float DeltaTime)
 {
-	// Clear existing values in TMap
-	TArray<FString> Keys;
-	mResults.GetKeys(Keys);
-	for (FString Key : Keys)
-	{
-		mResults.Remove(Key);
-	}
-	mResults.Compact();
+	if (!mLoaded)
+		return false;
 
+	mTimeNow += DeltaTime;
+	if (!(mTimeNow > mTimeLast + mStepSize / mSpeedMultiplier))
+		return false;
 
-	// Populate TMap
-	for (FString Key : mStoreVariables)
-	{
-		mResults.Add(Key);
-	}
+	if (mTimeLast >= mStopTime / mSpeedMultiplier)
+		return false;
+
+	mTimeLast += mStepSize / mSpeedMultiplier;
+
+	return true;
 }
