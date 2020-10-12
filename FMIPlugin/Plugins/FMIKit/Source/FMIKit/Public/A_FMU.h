@@ -54,6 +54,8 @@ public:
     void DoStep(float StepSize);
 	UFUNCTION(BlueprintCallable)
 	bool ControlStep(float DeltaTime);
+	UFUNCTION(BlueprintCallable)
+	void SetReal(FString Name, float Value);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mAutoSimulateTick = false;
@@ -64,9 +66,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		TMap<FName, FModelVariables> mModelVariables;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
-		TArray<FString> mStoreVariables;
+		TArray<FString> mStoredVariables;
 	UPROPERTY(BlueprintReadWrite, Category = "FMU Settings")
-	TMap<FString, float> mResults;
+		TMap<FString, float> mResults;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		float mStartTime = 0.f;

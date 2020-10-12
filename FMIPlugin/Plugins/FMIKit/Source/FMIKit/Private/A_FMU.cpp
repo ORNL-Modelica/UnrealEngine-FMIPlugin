@@ -80,7 +80,7 @@ void AA_FMU::Tick(float DeltaTime)
 			return;
 		}
 		
-		for (FString Key : mStoreVariables)
+		for (FString Key : mStoredVariables)
 		{
 			if (mResults.Contains(Key))
 			{
@@ -160,6 +160,11 @@ float AA_FMU::GetReal(FString Name)
 void AA_FMU::DoStep(float StepSize)
 {
     mFmu->doStep(StepSize);
+}
+
+void AA_FMU::SetReal(FString Name, float Value)
+{
+	mFmu->setReal(mModelVariables[FName(Name)].ValueReference, Value);
 }
 
 bool AA_FMU::ControlStep(float DeltaTime)
