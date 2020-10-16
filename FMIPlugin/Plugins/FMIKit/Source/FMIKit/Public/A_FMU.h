@@ -46,7 +46,6 @@ public:
 	
 	void ExtractFMU();
 	void ParseXML();
-	void InstantiateResultsMap();
 
     UFUNCTION(BlueprintCallable)
     float GetReal(FString Name);
@@ -60,7 +59,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mAutoSimulateTick = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
-	    FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../test.fmu") };
+		FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../ies.fmu") };
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 	    float mSpeedMultiplier = 1.0f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FMU Settings")
@@ -91,7 +90,7 @@ private:
     std::string mFMIVersion;
 	std::string mInstanceName = "instance";
 
-	bool mLoaded = false;	
+	bool mbLoaded = false;
 
 	fmi2Real mTimeLast;
 	fmi2Real mTimeNow;

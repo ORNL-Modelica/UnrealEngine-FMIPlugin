@@ -13,7 +13,6 @@ AA_FMU::AA_FMU()
     PrimaryActorTick.bCanEverTick = true;
 
     ExtractFMU();
-    ParseXML();
 	mResults.Empty();
 }
 
@@ -21,6 +20,8 @@ AA_FMU::AA_FMU()
 void AA_FMU::OnConstruction(const FTransform& Transform)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("test"));
+	//ExtractFMU();
+	//ParseXML();
 
 }
 
@@ -32,18 +33,12 @@ void AA_FMU::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	if (e.MemberProperty->GetFName().ToString() == TEXT("mPath"))
 	{
 		ExtractFMU();
-		ParseXML();
 	}
 
 	if (mAutoSimulateTick && e.MemberProperty->GetFName().ToString() == TEXT("mStoreVariables"))
 	{
 		mResults.Empty();
 	}
-
-	//if (e.MemberProperty->GetFName().ToString() == TEXT("mPause"))
-	//{
-	//	mPause = !mPause;
-	//}
 }
 #endif
 
@@ -58,7 +53,7 @@ void AA_FMU::BeginPlay()
     mFmu->setupExperiment(true, mTolerance, mStartTime, true, mStopTime);
     mFmu->enterInitializationMode();
     mFmu->exitInitializationMode();
-	mLoaded = true;
+	mbLoaded = true;
 
 	UE_LOG(LogTemp, Display, TEXT("Initialization of FMU complete: %s"), *mPath.FilePath);
 }
@@ -98,13 +93,16 @@ void AA_FMU::ExtractFMU()
 {
 	if (mPath.FilePath.IsEmpty())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Path to .fmu is empty."));
+		UE_LOG(LogTemp, Warning, TEXT("Path to .fmu is empty."));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Path to .fmu is empty."));
 		return;
 	}
 	std::string sPath = TCHAR_TO_UTF8(*mPath.FilePath);
 	size_t lastindex = sPath.find_last_of(".");
 	mUnzipDir = sPath.substr(0, lastindex);
 	unzip(sPath, mUnzipDir);
+
+	ParseXML();
 }
 
 void AA_FMU::ParseXML()
@@ -169,7 +167,7 @@ void AA_FMU::SetReal(FString Name, float Value)
 
 bool AA_FMU::ControlStep(float DeltaTime)
 {
-	if (!mLoaded)
+	if (!mbLoaded)
 		return false;
 
 	mTimeNow += DeltaTime;
