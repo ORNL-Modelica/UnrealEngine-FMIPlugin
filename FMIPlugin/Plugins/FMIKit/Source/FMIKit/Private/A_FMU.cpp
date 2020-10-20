@@ -12,7 +12,7 @@ AA_FMU::AA_FMU()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 	ExtractFMU();
-	//mResults.Empty();
+	mResults.Empty();
 }
 
 // Called when actor is created or any updates are made to it
@@ -45,13 +45,8 @@ void AA_FMU::BeginPlay()
 {
 	//SetActorTickInterval(1.f);
 	Super::BeginPlay();
-	
-	std::string temp_mGuid = TCHAR_TO_UTF8(*mGuid);
-	std::string temp_mModelIdentifier = TCHAR_TO_UTF8(*mModelIdentifier);
-	std::string temp_mUnzipDir = TCHAR_TO_UTF8(*mUnzipDir);
-	std::string temp_mInstanceName = TCHAR_TO_UTF8(*mInstanceName);
 
-	mFmu = new fmikit::FMU2Slave(temp_mGuid.c_str(), temp_mModelIdentifier.c_str(), temp_mUnzipDir.c_str(), temp_mInstanceName.c_str());
+	mFmu = new fmikit::FMU2Slave(std::string(TCHAR_TO_UTF8(*mGuid)), std::string(TCHAR_TO_UTF8(*mModelIdentifier)), std::string(TCHAR_TO_UTF8(*mUnzipDir)), std::string(TCHAR_TO_UTF8(*mInstanceName)));
     mFmu->instantiate(true);
     mFmu->setupExperiment(true, mTolerance, mStartTime, true, mStopTime);
     mFmu->enterInitializationMode();
@@ -97,7 +92,6 @@ void AA_FMU::ExtractFMU()
 	if (mPath.FilePath.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("mPath to .fmu is empty."));
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Path to .fmu is empty."));
 		return;
 	}
 	if (FPaths::GetExtension(*mPath.FilePath, false) != TEXT("fmu"))
@@ -116,7 +110,6 @@ void AA_FMU::ExtractFMU()
 
 void AA_FMU::ParseXML()
 {
-	//std::string xmlFile = mUnzipDir + "/modelDescription.xml";
 	FString xmlFile = mUnzipDir + "/modelDescription.xml";
 	FXmlFile model(xmlFile, EConstructMethod::ConstructFromFile);
 	
