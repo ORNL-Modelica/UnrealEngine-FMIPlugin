@@ -59,7 +59,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mAutoSimulateTick = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
-		FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../ies.fmu") };
+		FFilePath mPath;// = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../ies.fmu") };
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 	    float mSpeedMultiplier = 1.0f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FMU Settings")
@@ -81,14 +81,25 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mPause = false;
 
+	UPROPERTY(BlueprintReadWrite, Category = "FMU Settings")
+		FString mUnzipDir;
+	UPROPERTY(BlueprintReadWrite, Category = "FMU Settings")
+		FString mGuid;
+	UPROPERTY(BlueprintReadWrite, Category = "FMU Settings")
+		FString mModelIdentifier;
+	UPROPERTY(BlueprintReadWrite, Category = "FMU Settings")
+		FString mFMIVersion;
+	UPROPERTY(BlueprintReadWrite, Category = "FMU Settings")
+		FString mInstanceName = "instance";
+
 private:
 	fmikit::FMU2Slave *mFmu = nullptr;
 
-	std::string mUnzipDir;
-	std::string mGuid;
-	std::string mModelIdentifier;
-    std::string mFMIVersion;
-	std::string mInstanceName = "instance";
+	//std::string mUnzipDir;
+	//std::string mGuid;
+	//std::string mModelIdentifier;
+ //   std::string mFMIVersion;
+	//std::string mInstanceName = "instance";
 
 	bool mbLoaded = false;
 

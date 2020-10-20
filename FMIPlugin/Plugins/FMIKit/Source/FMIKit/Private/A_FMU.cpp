@@ -11,9 +11,8 @@ AA_FMU::AA_FMU()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
-
-    ExtractFMU();
-	mResults.Empty();
+	ExtractFMU();
+	//mResults.Empty();
 }
 
 // Called when actor is created or any updates are made to it
@@ -22,7 +21,6 @@ void AA_FMU::OnConstruction(const FTransform& Transform)
 	//UE_LOG(LogTemp, Warning, TEXT("test"));
 	//ExtractFMU();
 	//ParseXML();
-
 }
 
 #if WITH_EDITOR
@@ -48,7 +46,12 @@ void AA_FMU::BeginPlay()
 	//SetActorTickInterval(1.f);
 	Super::BeginPlay();
 	
-	mFmu = new fmikit::FMU2Slave(mGuid, mModelIdentifier, mUnzipDir, mInstanceName);
+	std::string temp_mGuid = TCHAR_TO_UTF8(*mGuid);
+	std::string temp_mModelIdentifier = TCHAR_TO_UTF8(*mModelIdentifier);
+	std::string temp_mUnzipDir = TCHAR_TO_UTF8(*mUnzipDir);
+	std::string temp_mInstanceName = TCHAR_TO_UTF8(*mInstanceName);
+
+	mFmu = new fmikit::FMU2Slave(temp_mGuid.c_str(), temp_mModelIdentifier.c_str(), temp_mUnzipDir.c_str(), temp_mInstanceName.c_str());
     mFmu->instantiate(true);
     mFmu->setupExperiment(true, mTolerance, mStartTime, true, mStopTime);
     mFmu->enterInitializationMode();
@@ -93,29 +96,35 @@ void AA_FMU::ExtractFMU()
 {
 	if (mPath.FilePath.IsEmpty())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Path to .fmu is empty."));
+		UE_LOG(LogTemp, Warning, TEXT("mPath to .fmu is empty."));
 		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Path to .fmu is empty."));
 		return;
 	}
+	if (FPaths::GetExtension(*mPath.FilePath, false) != TEXT("fmu"))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid mPath. It does not contain a `.fmu` extension."));
+		return;
+	}
+
 	std::string sPath = TCHAR_TO_UTF8(*mPath.FilePath);
 	size_t lastindex = sPath.find_last_of(".");
-	mUnzipDir = sPath.substr(0, lastindex);
-	unzip(sPath, mUnzipDir);
-
+	mUnzipDir = UTF8_TO_TCHAR(sPath.substr(0, lastindex).c_str());
+	unzip(sPath, TCHAR_TO_UTF8(*mUnzipDir));
+	
 	ParseXML();
 }
 
 void AA_FMU::ParseXML()
 {
-	std::string xmlFile = mUnzipDir + "/modelDescription.xml";
-	FString fXmlFile = UTF8_TO_TCHAR(xmlFile.c_str());
-	FXmlFile model(fXmlFile, EConstructMethod::ConstructFromFile);
+	//std::string xmlFile = mUnzipDir + "/modelDescription.xml";
+	FString xmlFile = mUnzipDir + "/modelDescription.xml";
+	FXmlFile model(xmlFile, EConstructMethod::ConstructFromFile);
 	
 	// fmiModelDescription (root)
 	FXmlNode* root = model.GetRootNode();
-	mFMIVersion = TCHAR_TO_UTF8(*root->GetAttribute("fmiVersion"));
-	mModelIdentifier = TCHAR_TO_UTF8(*root->GetAttribute("modelName"));;
-	mGuid = TCHAR_TO_UTF8(*root->GetAttribute("guid")); 
+	mFMIVersion = *root->GetAttribute("fmiVersion");
+	mModelIdentifier = *root->GetAttribute("modelName");
+	mGuid = *root->GetAttribute("guid"); 
 
 	// CoSimulation
 	// -
@@ -146,7 +155,7 @@ void AA_FMU::ParseXML()
 	// ModelStructure
 	// -
 
-	UE_LOG(LogTemp, Display, TEXT("XML parsing complete for: %s"), UTF8_TO_TCHAR(mModelIdentifier.c_str()));
+	UE_LOG(LogTemp, Display, TEXT("XML parsing complete for: %s"), *mModelIdentifier);
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("XML parsing complete for: %s"), *tests); // Does not work in VS2019
 }
 
