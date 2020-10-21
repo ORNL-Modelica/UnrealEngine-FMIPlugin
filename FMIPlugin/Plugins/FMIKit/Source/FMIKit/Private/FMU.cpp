@@ -138,7 +138,7 @@ FMU::FMU(const std::string &guid, const std::string &modelIdentifier, const std:
 	m_libraryHandle = LoadLibraryEx(libPath.c_str(), NULL, LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
 
 	// remove the binaries directory from the DLL path
-	//RemoveDllDirectory(dllDirectoryCookie);
+	RemoveDllDirectory(dllDirectoryCookie);
 # else
 	m_libraryHandle = dlopen(libraryPath.c_str(), RTLD_LAZY);
 # endif
