@@ -109,6 +109,7 @@ void AA_FMU::ExtractFMU()
 		return;
 	}
 
+    mPath.FilePath = FPaths::ConvertRelativePathToFull(mPath.FilePath);
 	std::string sPath = TCHAR_TO_UTF8(*mPath.FilePath);
 	size_t lastindex = sPath.find_last_of(".");
 	mUnzipDir = sPath.substr(0, lastindex).c_str();
