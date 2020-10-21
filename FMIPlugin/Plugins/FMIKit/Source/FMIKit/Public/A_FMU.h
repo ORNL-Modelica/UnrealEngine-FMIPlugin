@@ -83,16 +83,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mPause = false;
 
-	//UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
-	//	FString mUnzipDir;
-	//UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
-	//	FString mGuid;
-	//UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
-	//	FString mModelIdentifier;
-	//UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
-	//	FString mFMIVersion;
-	//UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
-	//	FString mInstanceName = "instance";
+	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
+		FString mUnzipDir;
+	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
+		FString mGuid;
+	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
+		FString mModelIdentifier;
+	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
+		FString mFMIVersion;
+	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
+		FString mInstanceName = "instance";
 
 	//FString mUnzipDir;
 	//FString mGuid;
@@ -108,11 +108,11 @@ private:
 	//std::string mFMIVersion;
 	//std::string mInstanceName = "instance";
 
-	FString mUnzipDir;
+	/*FString mUnzipDir;
 	FString mGuid;
 	FString mModelIdentifier;
 	FString mFMIVersion;
-	FString mInstanceName = "instance";
+	FString mInstanceName = "instance";*/
 
 	bool mbLoaded = false;
 

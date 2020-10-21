@@ -28,7 +28,7 @@ void AA_FMU::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	{
 		ExtractFMU();
 	}
-
+	std::string test = "a";
 	if (mAutoSimulateTick && e.MemberProperty->GetFName().ToString() == TEXT("mStoreVariables"))
 	{
 		mResults.Empty();
@@ -47,7 +47,7 @@ void AA_FMU::BeginPlay()
 	//SetActorTickInterval(1.f);
 	Super::BeginPlay();
 
-	mFmu = new fmikit::FMU2Slave(std::string(TCHAR_TO_UTF8(*mGuid)), std::string(TCHAR_TO_UTF8(*mModelIdentifier)), std::string(TCHAR_TO_UTF8(*mUnzipDir)), std::string(TCHAR_TO_UTF8(*mInstanceName)));
+	mFmu = new fmikit::FMU2Slave(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
 	mFmu->instantiate(true);
 	mFmu->setupExperiment(true, mTolerance, mStartTime, true, mStopTime);
 	mFmu->enterInitializationMode();
@@ -98,6 +98,11 @@ void AA_FMU::ExtractFMU()
 	if (FPaths::GetExtension(*mPath.FilePath, false) != TEXT("fmu"))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Invalid mPath. It does not contain a `.fmu` extension."));
+		return;
+	}
+	if (!FPaths::FileExists(*mPath.FilePath))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid mPath. %s not found."), *mPath.FilePath);
 		return;
 	}
 
