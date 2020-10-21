@@ -17,7 +17,6 @@ struct FModelVariables : public FTableRowBase
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		int ValueReference;
-
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -36,6 +35,7 @@ protected:
 	// Called when actor is created or any updates are made to it
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void PostInitProperties() override;
+	virtual void PostLoad() override;
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
@@ -61,7 +61,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mAutoSimulateTick = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
-		FFilePath mPath;// = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../ies.fmu") };
+		FFilePath mPath;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		float mSpeedMultiplier = 1.0f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FMU Settings")
@@ -94,25 +94,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
 		FString mInstanceName = "instance";
 
-	//FString mUnzipDir;
-	//FString mGuid;
-	//FString mModelIdentifier;
-	//FString mFMIVersion;
-	//FString mInstanceName = "instance";
 private:
 	fmikit::FMU2Slave* mFmu = nullptr;
-
-	//std::string mUnzipDir;
-	//std::string mGuid;
-	//std::string mModelIdentifier;
-	//std::string mFMIVersion;
-	//std::string mInstanceName = "instance";
-
-	/*FString mUnzipDir;
-	FString mGuid;
-	FString mModelIdentifier;
-	FString mFMIVersion;
-	FString mInstanceName = "instance";*/
 
 	bool mbLoaded = false;
 

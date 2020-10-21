@@ -27,8 +27,8 @@ void AA_FMU::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	if (e.MemberProperty->GetFName().ToString() == TEXT("mPath"))
 	{
 		ExtractFMU();
+		mResults.Empty();
 	}
-	std::string test = "a";
 	if (mAutoSimulateTick && e.MemberProperty->GetFName().ToString() == TEXT("mStoreVariables"))
 	{
 		mResults.Empty();
@@ -39,6 +39,14 @@ void AA_FMU::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 void AA_FMU::PostInitProperties()
 {
 	Super::PostInitProperties();
+}
+
+void AA_FMU::PostLoad()
+{
+	Super::PostLoad();
+
+	ExtractFMU();
+	mResults.Empty();
 }
 
 // Called when the game starts or when spawned
