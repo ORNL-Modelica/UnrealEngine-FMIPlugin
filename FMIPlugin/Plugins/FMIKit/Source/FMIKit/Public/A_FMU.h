@@ -35,6 +35,7 @@ protected:
 
 	// Called when actor is created or any updates are made to it
 	virtual void OnConstruction(const FTransform& Transform) override;
+    virtual void PostInitProperties() override;
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
@@ -81,36 +82,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mPause = false;
 
-	UPROPERTY(EditAnywhere,Category = "FMU Settings")
-		FString mUnzipDir;
-	UPROPERTY(EditAnywhere, Category = "FMU Settings")
-		FString mGuid;
-	UPROPERTY(EditAnywhere, Category = "FMU Settings")
-		FString mModelIdentifier;
-	UPROPERTY(EditAnywhere, Category = "FMU Settings")
-		FString mFMIVersion;
-	UPROPERTY(EditAnywhere, Category = "FMU Settings")
-		FString mInstanceName = "instance";
-
-	//FString mUnzipDir;
-	//FString mGuid;
-	//FString mModelIdentifier;
-	//FString mFMIVersion;
-	//FString mInstanceName = "instance";
 private:
 	fmikit::FMU2Slave *mFmu = nullptr;
 
-	//std::string mUnzipDir;
-	//std::string mGuid;
-	//std::string mModelIdentifier;
-	//std::string mFMIVersion;
-	//std::string mInstanceName = "instance";
-
-	//FString mUnzipDir;
-	//FString mGuid;
-	//FString mModelIdentifier;
-	//FString mFMIVersion;
-	//FString mInstanceName = "instance";
+	std::string mUnzipDir;
+    std::string mGuid;
+    std::string mModelIdentifier;
+    std::string mFMIVersion;
+    std::string mInstanceName = "instance";
 
 	bool mbLoaded = false;
 
