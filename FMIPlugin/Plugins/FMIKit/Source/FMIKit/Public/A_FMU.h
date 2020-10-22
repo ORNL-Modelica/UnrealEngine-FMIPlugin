@@ -15,17 +15,16 @@ struct FModelVariables : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 public:
-		UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		int ValueReference;
-
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class FMIKIT_API AA_FMU : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AA_FMU();
 
@@ -35,38 +34,42 @@ protected:
 
 	// Called when actor is created or any updates are made to it
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void PostInitProperties() override;
+	virtual void PostLoad() override;
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
+
 	void ExtractFMU();
 	void ParseXML();
-	void InstantiateResultsMap();
+	void GetModelDescription();
 
-    UFUNCTION(BlueprintCallable)
-    float GetReal(FString Name);
-    UFUNCTION(BlueprintCallable)
-    void DoStep(float StepSize);
 	UFUNCTION(BlueprintCallable)
-	bool ControlStep(float DeltaTime);
+		float GetReal(FString Name);
+	UFUNCTION(BlueprintCallable)
+		void DoStep(float StepSize);
+	UFUNCTION(BlueprintCallable)
+		bool ControlStep(float DeltaTime);
+	UFUNCTION(BlueprintCallable)
+		void SetReal(FString Name, float Value);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mAutoSimulateTick = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
-	    FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../test.fmu") };
+		FFilePath mPath;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
-	    float mSpeedMultiplier = 1.0f;
+		float mSpeedMultiplier = 1.0f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		TMap<FName, FModelVariables> mModelVariables;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
-		TArray<FString> mStoreVariables;
+		TArray<FString> mStoredVariables;
 	UPROPERTY(BlueprintReadWrite, Category = "FMU Settings")
-	TMap<FString, float> mResults;
+		TMap<FString, float> mResults;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		float mStartTime = 0.f;
@@ -80,18 +83,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mPause = false;
 
+	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
+		FString mUnzipDir;
+	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
+		FString mGuid;
+	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
+		FString mModelIdentifier;
+	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
+		FString mFMIVersion;
+	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
+		FString mInstanceName = "instance";
+
 private:
-	fmikit::FMU2Slave *mFmu = nullptr;
+	fmikit::FMU2Slave* mFmu = nullptr;
 
-	std::string mUnzipDir;
-	std::string mGuid;
-	std::string mModelIdentifier;
-    std::string mFMIVersion;
-	std::string mInstanceName = "instance";
-
-	bool mLoaded = false;	
+	bool mbLoaded = false;
 
 	fmi2Real mTimeLast;
 	fmi2Real mTimeNow;
-	
+
 };

@@ -74,3 +74,5 @@ Build/*/**
 # .fmu extraction folders
 test/
 BouncingBall/
+ies/
+FMIPlugin/Content/
