@@ -33,6 +33,13 @@ void AA_FMU::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	{
 		mResults.Empty();
 	}
+	if (e.MemberProperty->GetFName().ToString() == TEXT("bUseXMLExperimentSettings"))
+	{
+		if (bUseXMLExperimentSettings)
+		{
+			ParseXML();
+		}
+	}
 }
 #endif
 
@@ -126,6 +133,13 @@ void AA_FMU::ExtractFMU()
 void AA_FMU::ParseXML()
 {
 	FString xmlFile = mUnzipDir + "/modelDescription.xml";
+
+	if (!FPaths::FileExists(*xmlFile))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid mPath. %s not found."), *xmlFile);
+		return;
+	}
+
 	FXmlFile model(xmlFile, EConstructMethod::ConstructFromFile);
 
 	// fmiModelDescription (root)
@@ -138,10 +152,13 @@ void AA_FMU::ParseXML()
 	// -
 
 	// DefaultExperiment
-	FXmlNode* defaultExperiment = root->FindChildNode("DefaultExperiment");
-	mStartTime = FCString::Atof(*defaultExperiment->GetAttribute("startTime"));
-	mStopTime = FCString::Atof(*defaultExperiment->GetAttribute("stopTime"));
-	mTolerance = FCString::Atof(*defaultExperiment->GetAttribute("tolerance"));
+	if (bUseXMLExperimentSettings)
+	{
+		FXmlNode* defaultExperiment = root->FindChildNode("DefaultExperiment");
+		mStartTime = FCString::Atof(*defaultExperiment->GetAttribute("startTime"));
+		mStopTime = FCString::Atof(*defaultExperiment->GetAttribute("stopTime"));
+		mTolerance = FCString::Atof(*defaultExperiment->GetAttribute("tolerance"));
+	}
 
 	// ModelVariables
 	FXmlNode* modelVariables = root->FindChildNode("ModelVariables");

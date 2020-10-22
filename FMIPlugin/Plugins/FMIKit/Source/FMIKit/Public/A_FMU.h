@@ -58,7 +58,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SetReal(FString Name, float Value);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings", )
 		bool mAutoSimulateTick = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		FFilePath mPath;
@@ -72,6 +72,8 @@ public:
 		TMap<FString, float> mResults;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
+		bool bUseXMLExperimentSettings = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		float mStartTime = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		float mStopTime = 1.f;
@@ -79,7 +81,6 @@ public:
 		float mStepSize = 0.1f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		float mTolerance = 1e-4;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mPause = false;
 
