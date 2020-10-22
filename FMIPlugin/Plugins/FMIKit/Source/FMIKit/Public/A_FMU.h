@@ -58,7 +58,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SetReal(FString Name, float Value);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings", )
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mAutoSimulateTick = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		FFilePath mPath;
