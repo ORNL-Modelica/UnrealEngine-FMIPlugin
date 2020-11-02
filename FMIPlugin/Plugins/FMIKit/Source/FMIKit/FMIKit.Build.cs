@@ -32,8 +32,6 @@ public class FMIKit : ModuleRules
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
-				Path.Combine(FMIKitPath, "Include"),
-				//Path.Combine(FMIKitPath, "src"),
 				// ... add public include paths required here ...
 			}
 			);
@@ -41,10 +39,9 @@ public class FMIKit : ModuleRules
 		
 		PrivateIncludePaths.AddRange(
 			new string[] {
-				//Path.Combine(FMIKitPath, "src"),
+				Path.Combine(FMIKitPath, "Include"),
 				Path.Combine(LibZipPath, "Include"),
 				Path.Combine(ZLibPath, "Include"),
-				//Path.Combine(FMIKitPath, "Include"),
 				// ... add other private include paths required here ...
 			}
 			);
@@ -93,8 +90,8 @@ public class FMIKit : ModuleRules
             isLibrarySupported = true;
 
 
-			// FMIKit Path
-			//string SourcePath = Path.Combine(FMIKitPath, "src");
+			// FMIKit
+			PublicIncludePaths.Add(Path.Combine(FMIKitPath, "Include"));
 
 			// LibZip
 			string LibrariesPath = Path.Combine(LibZipPath, "lib");
