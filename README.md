@@ -14,7 +14,8 @@ This work was tested using the following. It may work on something else but no g
 - Visual Studio 2019
 
 FMU
-- The included example FMU, `test.fmu`, and is a LorenzSystem model. The Modelica file is included in the `Modelica` folder.
+- The included example FMU, `test.fmu`, and is a (Lorenz System model)[https://en.wikipedia.org/wiki/Lorenz_system].
+  - The Modelica file is included in the `Modelica` folder.
 - This FMU is generated using Dymola 2021 with Binary Model Export License (i.e., license free FMU)
 
 # Regarding `A_FMU`
