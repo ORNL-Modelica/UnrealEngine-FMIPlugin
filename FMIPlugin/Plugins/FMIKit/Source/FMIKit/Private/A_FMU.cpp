@@ -61,13 +61,15 @@ void AA_FMU::BeginPlay()
 {
 	//SetActorTickInterval(1.f);
 	Super::BeginPlay();
-
+		
 	mFmu = new fmikit::FMU2Slave(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
 	mFmu->instantiate(true);
 	mFmu->setupExperiment(true, mTolerance, mStartTime, true, mStopTime);
 	mFmu->enterInitializationMode();
 	mFmu->exitInitializationMode();
 	mbLoaded = true;
+
+	mFMUTime = mStartTime;
 
 	UE_LOG(LogTemp, Display, TEXT("Initialization of FMU complete: %s"), *mPath.FilePath);
 }
@@ -238,6 +240,11 @@ bool AA_FMU::ControlStep(float DeltaTime)
 		return false;
 
 	mTimeLast += mStepSize / mSpeedMultiplier;
+	mFMUTime += mStepSize;
 
+	//if (mbPrintFMUTime)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("XML parsing complete for: %f"), mFMUTime);
+	//}
 	return true;
 }

@@ -83,6 +83,8 @@ public:
 		float mTolerance = 1e-4;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mPause = false;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
+	//bool mbPrintFMUTime = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
 		FString mUnzipDir;
@@ -95,12 +97,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
 		FString mInstanceName = "instance";
 
+	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
+		float mFMUTime;
 private:
 	fmikit::FMU2Slave* mFmu = nullptr;
 
 	bool mbLoaded = false;
-
+	
 	fmi2Real mTimeLast;
 	fmi2Real mTimeNow;
-
+	
 };

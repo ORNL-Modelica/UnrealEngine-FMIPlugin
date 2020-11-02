@@ -11,7 +11,12 @@ public class FMIKit : ModuleRules
         get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "../../ThirdParty/")); }
     }
 
-    private string LibZipPath
+	private string FMIKitPath
+	{
+		get { return Path.GetFullPath(Path.Combine(ThirdPartyPath, "fmikit/")); }
+	}
+
+	private string LibZipPath
     {
         get { return Path.GetFullPath(Path.Combine(ThirdPartyPath, "libzip/")); }
     }
@@ -27,6 +32,8 @@ public class FMIKit : ModuleRules
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
+				Path.Combine(FMIKitPath, "Include"),
+				//Path.Combine(FMIKitPath, "src"),
 				// ... add public include paths required here ...
 			}
 			);
@@ -34,8 +41,10 @@ public class FMIKit : ModuleRules
 		
 		PrivateIncludePaths.AddRange(
 			new string[] {
+				//Path.Combine(FMIKitPath, "src"),
 				Path.Combine(LibZipPath, "Include"),
 				Path.Combine(ZLibPath, "Include"),
+				//Path.Combine(FMIKitPath, "Include"),
 				// ... add other private include paths required here ...
 			}
 			);
@@ -83,8 +92,12 @@ public class FMIKit : ModuleRules
         {
             isLibrarySupported = true;
 
+
+			// FMIKit Path
+			//string SourcePath = Path.Combine(FMIKitPath, "src");
+
 			// LibZip
-            string LibrariesPath = Path.Combine(LibZipPath, "lib");
+			string LibrariesPath = Path.Combine(LibZipPath, "lib");
             string DLLPath = Path.Combine(LibZipPath, "dll");
 			
 			PublicIncludePaths.Add(Path.Combine(LibZipPath, "Include"));
