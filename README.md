@@ -42,6 +42,7 @@ These examples use the `test.fmu` included in the repo.
   - `BP_FMU` implements the `A_FMU` class
 - `Level_1`
   - Simple use of  `A_FMU` and printing a variable to the screen via the level blueprint.
+  - [Short Demo video](https://youtu.be/_S_oY2bdlZM)
 
 # Known Issues
 
