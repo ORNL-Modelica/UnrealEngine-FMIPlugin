@@ -16,9 +16,14 @@ public class FMIKit : ModuleRules
         get { return Path.GetFullPath(Path.Combine(ThirdPartyPath, "libzip/")); }
     }
 	
-	    private string ZLibPath
+	private string ZLibPath
     {
         get { return Path.GetFullPath(Path.Combine(ThirdPartyPath, "zlib/")); }
+    }
+	
+	private string FMIKitPath
+    {
+        get { return Path.GetFullPath(Path.Combine(ThirdPartyPath, "fmikit/")); }
     }
 	
 	public FMIKit(ReadOnlyTargetRules Target) : base(Target)
@@ -36,6 +41,7 @@ public class FMIKit : ModuleRules
 			new string[] {
 				Path.Combine(LibZipPath, "Include"),
 				Path.Combine(ZLibPath, "Include"),
+				Path.Combine(FMIKitPath, "Include"),
 				// ... add other private include paths required here ...
 			}
 			);
@@ -104,6 +110,9 @@ public class FMIKit : ModuleRules
 
             PublicDelayLoadDLLs.Add("zlib.dll");
             RuntimeDependencies.Add(Path.Combine(DLLPath, "zlib.dll"));
+			
+			// FMIKit
+			PublicIncludePaths.Add(Path.Combine(FMIKitPath, "Include"));
         }
 
         return isLibrarySupported;
