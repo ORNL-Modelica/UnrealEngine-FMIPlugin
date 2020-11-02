@@ -24,7 +24,7 @@ Follow the following steps to get this project up and running on your own comput
 
 - Download and unzip the folder into your desired location **OR** clone the repository.
 - Open the project `FMIPlugin.uproject` by double-clicking the file.
-- When prompted ro rebuild the project click `Yes`.
+- When prompte, rebuild the project click `Yes`.
   - The project will build and then launch Unreal Engine.
 
 # Test Installation
