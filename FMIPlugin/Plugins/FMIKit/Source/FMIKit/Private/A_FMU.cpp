@@ -64,7 +64,7 @@ void AA_FMU::BeginPlay()
 	bool bFMUExtractedExists = FPaths::FileExists(mUnzipDir + "/modelDescription.xml");
 	if (!bFMUExtractedExists)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Initialization of FMU failed. Try checking that the .fmu exists"));
+		UE_LOG(LogTemp, Error, TEXT("Initialization of FMU failed. Try checking that the .fmu exists. Currently looking for %s"), *mUnzipDir);
 		return;
 	}
 
