@@ -59,9 +59,18 @@ void AA_FMU::PostLoad()
 // Called when the game starts or when spawned
 void AA_FMU::BeginPlay()
 {
+
+	// Prevent crashing due to missing extracted fmu
+	bool bFMUExtractedExists = FPaths::FileExists(mUnzipDir + "/modelDescription.xml");
+	if (!bFMUExtractedExists)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Initialization of FMU failed. Try checking that the .fmu exists"));
+		return;
+	}
+
 	//SetActorTickInterval(1.f);
 	Super::BeginPlay();
-		
+
 	mFmu = new fmikit::FMU2Slave(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
 	mFmu->instantiate(true);
 	mFmu->setupExperiment(true, mTolerance, mStartTime, true, mStopTime);
