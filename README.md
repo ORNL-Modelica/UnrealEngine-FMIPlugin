@@ -5,7 +5,8 @@
 - A MVP (minimally viable product) of simulating FMUs within the Unreal Engine environment.
 - This MVP relies on the [FMIKit repositorty](https://github.com/CATIA-Systems/FMIKit-Simulink) (non-simulink portion)
 - Special thanks to Torsten Sommer for his work on FMIKit!
-
+- [Short Demo video](https://youtu.be/r3NeJKJt4Z8)
+  
 # Prerequistes
 
 This work was tested using the following. It may work on something else but no gurantees.
@@ -43,7 +44,6 @@ These examples use the `test.fmu` included in the repo.
   - `BP_FMU` implements the `A_FMU` class
 - `Level_1`
   - Simple use of  `A_FMU` and printing a variable to the screen via the level blueprint.
-  - [Short Demo video](https://youtu.be/_S_oY2bdlZM)
 
 # Known Issues
 
