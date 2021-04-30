@@ -5,6 +5,7 @@
 
 #include "XmlFile.h"
 #include "unzipper.hpp"
+#include "..\Public\A_FMU.h"
 
 // Sets default values
 AA_FMU::AA_FMU()
@@ -81,6 +82,14 @@ void AA_FMU::BeginPlay()
 	mFMUTime = mStartTime;
 
 	UE_LOG(LogTemp, Display, TEXT("Initialization of FMU complete: %s"), *mPath.FilePath);
+}
+
+void AA_FMU::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UE_LOG(LogTemp, Log, TEXT("cleanup worked"));
+	//mFmu = new fmikit::FMU2Slave(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
+	mFmu->cleanUp();
+	Super::EndPlay(EndPlayReason);
 }
 
 // Called every frame
