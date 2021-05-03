@@ -86,7 +86,6 @@ void AA_FMU::BeginPlay()
 
 void AA_FMU::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	UE_LOG(LogTemp, Log, TEXT("cleanup worked"));
 	Super::EndPlay(EndPlayReason);
 	delete mFmu;
 }
