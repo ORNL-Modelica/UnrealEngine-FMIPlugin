@@ -68,14 +68,9 @@ namespace fmikit {
 		freeInstance();
 	}
 
-	void FMU2::cleanUp() {
-		terminate();
-		freeInstance();
-	}
-
 	void FMU2::terminate() {
 		assertState(EventModeState | ContinuousTimeModeState | StepCompleteState | StepFailedState);
-		ASSERT_NO_ERROR(fmi2Terminate(m_component), "Failed to terminate");
+		ASSERT_NO_ERROR(fmi2Terminate(m_component), "Failed to terminate")
 		logDebug("fmi2Terminate()");
 		m_state = TerminatedState;
 	}
