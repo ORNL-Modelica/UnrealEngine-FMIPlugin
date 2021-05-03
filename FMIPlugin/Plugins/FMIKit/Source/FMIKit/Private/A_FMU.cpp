@@ -5,6 +5,7 @@
 
 #include "XmlFile.h"
 #include "unzipper.hpp"
+#include "..\Public\A_FMU.h"
 
 // Sets default values
 AA_FMU::AA_FMU()
@@ -81,6 +82,13 @@ void AA_FMU::BeginPlay()
 	mFMUTime = mStartTime;
 
 	UE_LOG(LogTemp, Display, TEXT("Initialization of FMU complete: %s"), *mPath.FilePath);
+}
+
+void AA_FMU::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UE_LOG(LogTemp, Log, TEXT("cleanup worked"));
+	Super::EndPlay(EndPlayReason);
+	delete mFmu;
 }
 
 // Called every frame

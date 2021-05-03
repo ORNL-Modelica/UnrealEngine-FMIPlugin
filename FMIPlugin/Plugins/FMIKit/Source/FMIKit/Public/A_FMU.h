@@ -31,11 +31,14 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	// Called when actor is created or any updates are made to it
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void PostInitProperties() override;
 	virtual void PostLoad() override;
+
+
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
