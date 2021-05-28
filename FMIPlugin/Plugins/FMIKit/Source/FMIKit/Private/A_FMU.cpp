@@ -1,11 +1,21 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "A_FMU.h"
 
 #include "XmlFile.h"
-#include "unzipper.hpp"
 #include "..\Public\A_FMU.h"
+
+#ifdef WIN32
+#include "Windows.h"
+#define cmd(a) WinExec(a, SW_HIDE)
+#define comparison < 32
+
+#include <direct.h>
+#define mkdir _mkdir
+#else
+#define cmd(a) system(a)
+#define comparison != 0
+#endif
 
 // Sets default values
 AA_FMU::AA_FMU()
@@ -143,7 +153,24 @@ void AA_FMU::ExtractFMU()
 	std::string sPath = TCHAR_TO_UTF8(*mPath.FilePath);
 	size_t lastindex = sPath.find_last_of(".");
 	mUnzipDir = UTF8_TO_TCHAR(sPath.substr(0, lastindex).c_str());
-	unzip(sPath, TCHAR_TO_UTF8(*mUnzipDir));
+	
+	// attempt to use unzip, then 7z, then tar
+	std::string dir = TCHAR_TO_UTF8(*mUnzipDir);
+	std::string exe = "unzip " + sPath + " -d " + dir;
+	bool success = true;
+	if (cmd(exe.c_str()) comparison) {
+		exe = "7z x \"" + sPath + "\" -aoa -o\"" + dir + "\"";
+		if (cmd(exe.c_str()) comparison) {
+			mkdir(dir.c_str());
+			exe = "tar -xf \"" + sPath + "\" -C \"" + dir + "\"";
+			success = (cmd(exe.c_str()) comparison);
+		}
+	}
+	// TODO: Dual maintenance with FmuActorComponent.cpp
+	// TODO: Add jar, minizip or other as unzip option? Use CreateProcess() instead of WinExec()?
+	FString extracted = success ? "Extracted" : "Failed to extract";
+	FString msg(exe.c_str());
+	UE_LOG(LogTemp, Display, TEXT("%s fmu using command: %s"), *extracted, *msg);
 
 	ParseXML();
 }

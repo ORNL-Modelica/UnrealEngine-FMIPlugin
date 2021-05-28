@@ -1,11 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "FmuActorComponent.h"
 #include "GameFramework/Actor.h"
 #include "XmlFile.h"
-#include "unzipper.hpp"
 
+#ifdef WIN32
+#include "Windows.h"
+#define cmd(a) WinExec(a, SW_HIDE)
+#define comparison < 32
+
+#include <direct.h>
+#define mkdir _mkdir
+#else
+#define cmd(a) system(a)
+#define comparison != 0
+#endif
 
 // Sets default values for this component's properties
 UFmuActorComponent::UFmuActorComponent()
@@ -39,7 +48,24 @@ void UFmuActorComponent::BeginPlay()
 		std::string sPath = TCHAR_TO_UTF8(*fullPath);
 		size_t lastindex = sPath.find_last_of(".");
 		mUnzipDir = sPath.substr(0, lastindex);
-		unzip(sPath, mUnzipDir);
+		
+		// attempt to use unzip, then 7z, then tar
+		std::string dir = mUnzipDir;
+		std::string exe = "unzip " + sPath + " -d " + dir;
+		bool success = true;
+		if (cmd(exe.c_str()) comparison) {
+			exe = "7z x \"" + sPath + "\" -aoa -o\"" + dir + "\"";
+			if (cmd(exe.c_str()) comparison) {
+				mkdir(dir.c_str());
+				exe = "tar -xf \"" + sPath + "\" -C \"" + dir + "\"";
+				success = (cmd(exe.c_str()) comparison);
+			}
+		}
+		// TODO: Dual maintenance with A_FMU.cpp
+		// TODO: Add jar, minizip or other as unzip option? Use CreateProcess() instead of WinExec()?
+		FString extracted = success ? "Extracted" : "Failed to extract";
+		FString msg(exe.c_str());
+		UE_LOG(LogTemp, Display, TEXT("%s fmu using command: %s"), *extracted, *msg);
 	}
 
 	// These should be populated from the extracted ModelDescription.xml
