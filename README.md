@@ -31,7 +31,14 @@ In this current version, the `A_FMU` under `FMIKit C++ Classes/FMIKit/Public` co
 
 Follow the following steps to get this project up and running on your own computer.
 
-- Download and unzip the folder into your desired location **OR** clone the repository.
+- Download and unzip the folder into your desired location **OR**
+- Clone the repository
+  - "git submodule update --init"
+  - FMU[1/2].cpp are symlinks 
+    - copy the submodule files over the links (text files) **OR**
+    - it may be necessary to turn symlinks = true in .git/config
+    - it may be necessary to have installed git with enable symlinks.
+    - it may be necessary to clone or run "git reset HEAD --hard" as administrator 
 - Open the project `FMIPlugin.uproject` by double-clicking the file.
 - When prompted, rebuild the project click `Yes`.
   - The project will build and then launch Unreal Engine.
