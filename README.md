@@ -3,19 +3,20 @@
 ![FMUinUE4](docs/fmuUEBP.PNG)
 
 - A MVP (minimally viable product) of simulating FMUs within the Unreal Engine environment.
-- This MVP relies on the [FMIKit repositorty](https://github.com/CATIA-Systems/FMIKit-Simulink) (non-simulink portion)
+- This MVP relies on the [FMIKit repository] (https://github.com/CATIA-Systems/FMIKit-Simulink) (non-simulink portion)
 - Special thanks to Torsten Sommer for his work on FMIKit!
-- [Short Demo video](https://youtu.be/r3NeJKJt4Z8)
+- [Short Demo video] (https://youtu.be/r3NeJKJt4Z8)
   
-# Prerequistes
+# Prerequisites
 
-This work was tested using the following. It may work on something else but no gurantees.
+This work was tested using the following. It may work on something else but no guarantees.
 - Windows 10
 - Unreal Engine 4.25
 - Visual Studio 2019
+- An unzip utility on path, currently supported are unzip, 7z, tar
 
 FMU
-- The included example FMU, `test.fmu`, and is a [Lorenz System model](https://en.wikipedia.org/wiki/Lorenz_system).
+- The included example FMU, `test.fmu`, and is a [Lorenz System model] (https://en.wikipedia.org/wiki/Lorenz_system).
   - The Modelica file is included in the `Modelica` folder.
 - This FMU is generated using Dymola 2021 with Binary Model Export License (i.e., license free FMU)
 
@@ -32,7 +33,7 @@ Follow the following steps to get this project up and running on your own comput
 
 - Download and unzip the folder into your desired location **OR** clone the repository.
 - Open the project `FMIPlugin.uproject` by double-clicking the file.
-- When prompte, rebuild the project click `Yes`.
+- When prompted, rebuild the project click `Yes`.
   - The project will build and then launch Unreal Engine.
 
 # Test Installation
