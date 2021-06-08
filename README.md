@@ -58,6 +58,8 @@ Follow the following steps to get this project up and running on your own comput
 
 These examples use the `test.fmu` included in the repo.
 
+> For both levels, the user must replace the `M Path` variable with the path on your system to the `test.fmu` located at the root of the repo.
+> 
 - `Level_0`
   - This level provides example blueprints (`BP_FMU`) demonstrating the automatic and manual options for simulating an FMU.
   - `BP_FMU` implements the `A_FMU` class
