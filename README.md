@@ -67,3 +67,7 @@ These examples use the `test.fmu` included in the repo.
 # Known Issues
 
 - Currently only floats and booleans (i.e., 0/1) are supported variables in `A_FMU`.
+
+# License
+
+Copyright 2019 UT-Battelle. The code is released under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
