@@ -3,9 +3,9 @@
 ![FMUinUE4](docs/fmuUEBP.PNG)
 
 - A MVP (minimally viable product) of simulating FMUs within the Unreal Engine environment.
-- This MVP relies on the [FMIKit repository] (https://github.com/CATIA-Systems/FMIKit-Simulink) (non-simulink portion)
+- This MVP relies on the [FMIKit repository](https://github.com/CATIA-Systems/FMIKit-Simulink) (non-simulink portion)
 - Special thanks to Torsten Sommer for his work on FMIKit!
-- [Short Demo video] (https://youtu.be/r3NeJKJt4Z8)
+- [Short Demo video](https://youtu.be/r3NeJKJt4Z8)
   
 # Prerequisites
 
@@ -16,7 +16,7 @@ This work was tested using the following. It may work on something else but no g
 - **An unzip utility on path, currently supported are unzip, 7z, tar**
 
 FMU
-- The included example FMU, `test.fmu`, and is a [Lorenz System model] (https://en.wikipedia.org/wiki/Lorenz_system).
+- The included example FMU, `test.fmu`, and is a [Lorenz System model](https://en.wikipedia.org/wiki/Lorenz_system).
   - The Modelica file is included in the `Modelica` folder.
 - This FMU is generated using Dymola 2021 with Binary Model Export License (i.e., license free FMU)
 
