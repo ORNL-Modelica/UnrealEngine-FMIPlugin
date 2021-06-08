@@ -11,9 +11,9 @@
 
 This work was tested using the following. It may work on something else but no guarantees.
 - Windows 10
-- Unreal Engine 4.25
+- Unreal Engine 4.25+
 - Visual Studio 2019
-- An unzip utility on path, currently supported are unzip, 7z, tar
+- **An unzip utility on path, currently supported are unzip, 7z, tar**
 
 FMU
 - The included example FMU, `test.fmu`, and is a [Lorenz System model] (https://en.wikipedia.org/wiki/Lorenz_system).
@@ -29,10 +29,21 @@ In this current version, the `A_FMU` under `FMIKit C++ Classes/FMIKit/Public` co
 
 # Installation
 
-Follow the following steps to get this project up and running on your own computer.
+Follow the following steps to get this project up and running on your own computer. This project uses symbolic links (Method 2) but those can be tricky. So if you are not familiar with them it is recommended to use Method 1.
 
-- Download and unzip the folder into your desired location **OR**
-- Clone the repository
+**Method 1**
+1. Clone the repositoy with FMIKit submodule
+   - `git clone https://github.com/ORNL-Modelica/UnrealEngine-FMIPlugin.git`
+   - `cd` to repo
+   - `git submodule init`
+   - `git submodule update`
+1. Fix the symbolic links
+   - From `UnrealEngine-FMIPlugin/FMIPlugin/Plugins/FMIKit/ThirdParty/fmikit/src` copy the files `FMU.cpp`, `FMU1.cpp`, and `FMU2.cpp` and replace the same names files in `UnrealEngine-FMIPlugin/FMIPlugin/Plugins/FMIKit/Source/FMIKit/ThirdParty/fmikit/src`
+1. Launch the `FMIPlugin.uproject` rebuilding the project when prompted.
+1. Have fun!
+  
+**Method 2**
+1. Clone the repository
   - "git submodule update --init"
   - FMU[1/2].cpp are symlinks 
     - copy the submodule files over the links (text files) **OR**
