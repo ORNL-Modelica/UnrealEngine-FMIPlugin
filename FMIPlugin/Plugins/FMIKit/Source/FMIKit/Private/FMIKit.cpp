@@ -8,27 +8,6 @@
 void FFMIKitModule::StartupModule()
 {
 
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-	//Search project plugins folder for Dll
-	FString dllName = "zip.dll";
-	FString TPLPath = FPaths::ProjectDir() + "Plugins/FMIKit/ThirdParty";
-	if (SearchForDllPath(TPLPath, dllName))
-	{
-	}
-	else
-	{
-		//Stop loading - plugin required DLL to load successfully
-		checkf(false, TEXT("Failed to load dll"));
-	}
-	dllName = "zlib.dll";
-	if (SearchForDllPath(TPLPath, dllName))
-	{
-	}
-	else
-	{
-		//Stop loading - plugin required DLL to load successfully
-		checkf(false, TEXT("Failed to load dll"));
-	}
 }
 
 void FFMIKitModule::ShutdownModule()

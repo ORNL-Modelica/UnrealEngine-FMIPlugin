@@ -1,33 +1,18 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/*
+Copyright 2021, UT-Battelle, LLC
 
-//#pragma once
-//
-//#include "CoreMinimal.h"
-//#include "GameFramework/Actor.h"
-//#include "A_Test.generated.h"
-//
-//UCLASS()
-//class FMIKIT_API AA_Test : public AActor
-//{
-//	GENERATED_BODY()
-//	
-//public:	
-//	// Sets default values for this actor's properties
-//	AA_Test();
-//
-//protected:
-//	// Called when the game starts or when spawned
-//	virtual void BeginPlay() override;
-//
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
-//		FFilePath mPath = { FPaths::ConvertRelativePathToFull(FPaths::ProjectDir() + "../ies.fmu") };
-//public:	
-//	// Called every frame
-//	virtual void Tick(float DeltaTime) override;
-//
-//};
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-// Fill out your copyright notice in the Description page of Project Settings.
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 
 #pragma once
 
@@ -57,14 +42,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		FFilePath mPath;
 
-// With UPROPERTY() - this works as expected
-	//UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
-	//FString mUnzipDir;
-
-// Without UPROPERTY() -> this gets reset to default "Empty"
-	//FString mUnzipDir;
 private:
-
-// As private variable, UPROPERTY() not permitted -> this gets reset to default "Empty"
 	FString mUnzipDir;
 };
