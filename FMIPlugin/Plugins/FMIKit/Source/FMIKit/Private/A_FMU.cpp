@@ -130,30 +130,38 @@ void AA_FMU::Tick(float DeltaTime)
 	// This is an option to let the user have an auto simulated model instead of blueprint control. Having issues
 	if (mAutoSimulateTick && !mPause)
 	{
-		if (mLoop && (mFMUTime > mStopTime))
+		try
 		{
-			Initialize();
-		}
-
-		if (ControlStep(DeltaTime))
-		{
-			mFmu->doStep(mStepSize);
-		}
-		else
-		{
-			return;
-		}
-
-		for (FString Key : mStoredVariables)
-		{
-			if (mResults.Contains(Key))
+			if (mLoop && (mFMUTime > mStopTime))
 			{
-				mResults[Key] = mFmu->getReal(mModelVariables[FName(Key)].ValueReference);
+				Initialize();
 			}
-			else if (mModelVariables.Contains(FName(Key)))
+
+			if (ControlStep(DeltaTime))
 			{
-				mResults.Add(Key, mFmu->getReal(mModelVariables[FName(Key)].ValueReference));
+				mFmu->doStep(mStepSize);
 			}
+			else
+			{
+				return;
+			}
+
+			for (FString Key : mStoredVariables)
+			{
+				if (mResults.Contains(Key))
+				{
+					mResults[Key] = mFmu->getReal(mModelVariables[FName(Key)].ValueReference);
+				}
+				else if (mModelVariables.Contains(FName(Key)))
+				{
+					mResults.Add(Key, mFmu->getReal(mModelVariables[FName(Key)].ValueReference));
+				}
+			}
+		}
+		catch(std::exception e)
+		{
+			FString errorMsg(e.what());
+			UE_LOG(LogTemp, Error, TEXT("%s"), *errorMsg);
 		}
 	}
 }

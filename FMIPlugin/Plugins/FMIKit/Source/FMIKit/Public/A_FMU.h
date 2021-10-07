@@ -21,6 +21,7 @@ limitations under the License.
 #include "FMU2.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "A_FMU.generated.h"
 
 USTRUCT()
