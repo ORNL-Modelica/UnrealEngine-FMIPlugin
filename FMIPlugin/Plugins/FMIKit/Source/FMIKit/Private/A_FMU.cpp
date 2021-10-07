@@ -95,16 +95,24 @@ void AA_FMU::BeginPlay()
 
 	//SetActorTickInterval(1.f);
 	Super::BeginPlay();
+	
+	Initialize();
+}
+
+void AA_FMU::Initialize()
+{
+	mbLoaded = false;
+	mTimeNow = 0.0;
+	mTimeLast = 0.0;
+	mFMUTime = mStartTime;
 
 	mFmu = new fmikit::FMU2Slave(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
 	mFmu->instantiate(true);
 	mFmu->setupExperiment(true, mTolerance, mStartTime, true, mStopTime);
 	mFmu->enterInitializationMode();
 	mFmu->exitInitializationMode();
+
 	mbLoaded = true;
-
-	mFMUTime = mStartTime;
-
 	UE_LOG(LogTemp, Display, TEXT("Initialization of FMU complete: %s"), *mPath.FilePath);
 }
 
@@ -122,6 +130,11 @@ void AA_FMU::Tick(float DeltaTime)
 	// This is an option to let the user have an auto simulated model instead of blueprint control. Having issues
 	if (mAutoSimulateTick && !mPause)
 	{
+		if (mLoop && (mFMUTime > mStopTime))
+		{
+			Initialize();
+		}
+
 		if (ControlStep(DeltaTime))
 		{
 			mFmu->doStep(mStepSize);
@@ -216,7 +229,22 @@ void AA_FMU::ParseXML()
 		FXmlNode* defaultExperiment = root->FindChildNode("DefaultExperiment");
 		mStartTime = FCString::Atof(*defaultExperiment->GetAttribute("startTime"));
 		mStopTime = FCString::Atof(*defaultExperiment->GetAttribute("stopTime"));
+		mStepSize = FCString::Atof(*defaultExperiment->GetAttribute("stepSize"));
 		mTolerance = FCString::Atof(*defaultExperiment->GetAttribute("tolerance"));
+
+		// Check to ensure defaults exists that make sense. 0 is returned if the attribute is not found in the xml.
+		if (mStopTime == 0)
+		{
+			mStopTime = 1.0;
+		}
+		if (mStepSize == 0)
+		{
+			mStepSize = 0.1;
+		}
+		if (mTolerance == 0)
+		{
+			mTolerance = 1e-4;
+		}
 	}
 
 	// ModelVariables

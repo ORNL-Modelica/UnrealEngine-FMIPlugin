@@ -64,40 +64,62 @@ public:
 	void ParseXML();
 	void GetModelDescription();
 
+	// Function for instantiating the FMU (can be used to reset the FMU simulation as well).
+	UFUNCTION(BlueprintCallable)
+		void Initialize();
+	// Return the real variable of the specified name.
 	UFUNCTION(BlueprintCallable)
 		float GetReal(FString Name);
+	// Function to solver the FMU to the specified time step
 	UFUNCTION(BlueprintCallable)
 		void DoStep(float StepSize);
+	// Control logic to sync real time and fmu time together. Typically called before DoStep().
 	UFUNCTION(BlueprintCallable)
 		bool ControlStep(float DeltaTime);
+	// Change an FMU variable value.
 	UFUNCTION(BlueprintCallable)
 		void SetReal(FString Name, float Value);
 
+	// Use to specify if the internal logic is desired to run the FMU. Else control FMU solution manually.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mAutoSimulateTick = false;
+	// Full file path of the *.fmu file
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		FFilePath mPath;
+	// Change the simulation speed of the FMU relative to real time.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		float mSpeedMultiplier = 1.0f;
+	// Variables available in the XML for inputs/outputs
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		TMap<FName, FModelVariables> mModelVariables;
+	// Specify the variables to store for access. See mModelVariables for available variables.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		TArray<FString> mStoredVariables;
+	// Value of stored variables. Indexed in the same order as mStoredVariables.
 	UPROPERTY(BlueprintReadWrite, Category = "FMU Settings")
 		TMap<FString, float> mResults;
 
+	// Toggle to overwrite the editor specified settings with those found in FMU model description XML.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool bUseXMLExperimentSettings = false;
+	// Start time of the FMU simulation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		float mStartTime = 0.f;
+	// Stop time of the FMU simulation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		float mStopTime = 1.f;
+	// Time step (s) of the FMU simulation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		float mStepSize = 0.1f;
+	// FMU solver tolerance
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		float mTolerance = 1e-4;
+	// Variable to pause the FMU simulation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mPause = false;
+	// Toggle to have the simulation reset and restart when the mStopTime is reached
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
+		bool mLoop = false;
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 	//bool mbPrintFMUTime = false;
 
