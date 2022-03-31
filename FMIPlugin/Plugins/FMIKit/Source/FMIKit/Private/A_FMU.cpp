@@ -108,6 +108,12 @@ void AA_FMU::Initialize()
 
 	mFmu = new fmikit::FMU2Slave(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
 	mFmu->instantiate(true);
+
+	for (const TPair<FString, float>& pair : mInitialValues)
+	{
+		AA_FMU::SetReal(pair.Key, pair.Value);
+	}
+
 	mFmu->setupExperiment(true, mTolerance, mStartTime, true, mStopTime);
 	mFmu->enterInitializationMode();
 	mFmu->exitInitializationMode();

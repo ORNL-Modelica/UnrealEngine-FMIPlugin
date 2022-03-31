@@ -98,6 +98,9 @@ public:
 	// Value of stored variables. Indexed in the same order as mStoredVariables.
 	UPROPERTY(BlueprintReadWrite, Category = "FMU Settings")
 		TMap<FString, float> mResults;
+	// Specify the initial values of variables. See mModelVariables for potentially available variables.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
+		TMap<FString, float> mInitialValues;
 
 	// Toggle to overwrite the editor specified settings with those found in FMU model description XML.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
