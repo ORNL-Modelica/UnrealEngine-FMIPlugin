@@ -18,6 +18,8 @@ public class FMIKit : ModuleRules
 
 	public FMIKit(ReadOnlyTargetRules Target) : base(Target)
 	{
+		bEnableExceptions = true;
+
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
 		PublicIncludePaths.AddRange(
