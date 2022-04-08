@@ -106,6 +106,12 @@ void AA_FMU::Initialize()
 	mTimeLast = 0.0;
 	mFMUTime = mStartTime;
 
+	// not 100% sure this delete mFmu is required here.
+	if (mFmu)
+	{
+		delete mFmu;
+	}
+	// if(!mFmu) // This line with the new fmikit.... prevents (we think) issues with locked dll file. However, it messes up autolooping... need to find a better solution
 	mFmu = new fmikit::FMU2Slave(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
 	mFmu->instantiate(true);
 
@@ -193,7 +199,9 @@ void AA_FMU::ExtractFMU()
     mPath.FilePath = FPaths::ConvertRelativePathToFull(mPath.FilePath);
 	std::string sPath = TCHAR_TO_UTF8(*mPath.FilePath);
 	size_t lastindex = sPath.find_last_of(".");
-	mUnzipDir = UTF8_TO_TCHAR(sPath.substr(0, lastindex).c_str());
+
+	FString actorName = GetName(); // added in case multiple FMUs
+	mUnzipDir = UTF8_TO_TCHAR(sPath.substr(0, lastindex).c_str()) + actorName;
 	
 	// attempt to use unzip, then 7z, then tar
 	std::string dir = TCHAR_TO_UTF8(*mUnzipDir);
@@ -222,7 +230,7 @@ void AA_FMU::ParseXML()
 
 	if (!FPaths::FileExists(*xmlFile))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Invalid mPath. %s not found."), *xmlFile);
+		UE_LOG(LogTemp, Error, TEXT("Invalid mPath. %s not found. Make sure a supported unzip tool is on the PATH"), *xmlFile);
 		return;
 	}
 
