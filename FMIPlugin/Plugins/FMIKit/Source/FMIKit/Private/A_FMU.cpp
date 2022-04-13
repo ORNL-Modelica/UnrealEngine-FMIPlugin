@@ -19,6 +19,8 @@ limitations under the License.
 #include "XmlFile.h"
 #include "..\Public\A_FMU.h"
 
+#include "UsefulPython.h"
+
 #ifdef WIN32
 #include "Windows.h"
 #define cmd(a) WinExec(a, SW_HIDE)
@@ -84,6 +86,11 @@ void AA_FMU::PostLoad()
 // Called when the game starts or when spawned
 void AA_FMU::BeginPlay()
 {
+	double multiply = pyRun("  return a * b", 10., 20.);
+	UE_LOG(LogTemp, Display, TEXT("10 * 20 = %3.2f"), multiply);
+
+	double exponent = pyRun("  return a**b", 2., 10.);
+	UE_LOG(LogTemp, Display, TEXT("2^10 = %3.2f"), exponent);
 
 	// Prevent crashing due to missing extracted fmu
 	bool bFMUExtractedExists = FPaths::FileExists(mUnzipDir + "/modelDescription.xml");

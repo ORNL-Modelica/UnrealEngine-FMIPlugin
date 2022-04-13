@@ -6,10 +6,15 @@ using UnrealBuildTool;
 
 public class FMIKit : ModuleRules
 {
+  private string PythonPath
+  {
+    get { return Environment.GetEnvironmentVariable("PYTHON_PATH"); }
+  }
+  
 	private string ThirdPartyPath
-    {
-        get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "../../ThirdParty/")); }
-    }
+  {
+    get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "../../ThirdParty/")); }
+  }
 
 	private string FMIKitPath
 	{
@@ -31,6 +36,7 @@ public class FMIKit : ModuleRules
 		
 		PrivateIncludePaths.AddRange(
 			new string[] {
+				Path.Combine(PythonPath, "Include"),
 				Path.Combine(FMIKitPath, "Include"),
 				// ... add other private include paths required here ...
 			}
@@ -73,17 +79,23 @@ public class FMIKit : ModuleRules
 	
 	public bool LoadLib(ReadOnlyTargetRules Target)
     {
-        bool isLibrarySupported = false;
+      bool isLibrarySupported = false;
 
-        if ((Target.Platform == UnrealTargetPlatform.Win64) || (Target.Platform == UnrealTargetPlatform.Win32))
-        {
-            isLibrarySupported = true;
+      if ((Target.Platform == UnrealTargetPlatform.Win64) || (Target.Platform == UnrealTargetPlatform.Win32))
+      {
+        isLibrarySupported = true;
 
+        PublicAdditionalLibraries.AddRange(
+          new string[] {
+            Path.Combine(PythonPath, "libs", "python310.lib"),
+          }
+         );
+        PublicIncludePaths.Add(Path.Combine(PythonPath, "Include"));
 
-			// FMIKit
-			PublicIncludePaths.Add(Path.Combine(FMIKitPath, "Include"));
-        }
+        // FMIKit
+        PublicIncludePaths.Add(Path.Combine(FMIKitPath, "Include"));
+      }
 
-        return isLibrarySupported;
+      return isLibrarySupported;
     }
 }
