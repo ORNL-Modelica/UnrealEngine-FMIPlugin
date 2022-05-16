@@ -63,6 +63,7 @@ public:
 	void ExtractFMU();
 	void ParseXML();
 	void GetModelDescription();
+	void SetInitialValues();
 
 	// Function for instantiating the FMU (can be used to reset the FMU simulation as well).
 	UFUNCTION(BlueprintCallable)

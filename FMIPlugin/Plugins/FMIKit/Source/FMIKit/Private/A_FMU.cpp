@@ -115,13 +115,13 @@ void AA_FMU::Initialize()
 	mFmu = new fmikit::FMU2Slave(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
 	mFmu->instantiate(true);
 
-	for (const TPair<FString, float>& pair : mInitialValues)
-	{
-		AA_FMU::SetReal(pair.Key, pair.Value);
-	}
-
+	// Initial values seem to be required to be set at multiple places
+	// Line 1180 - under "if initialize:" https://github.com/CATIA-Systems/FMPy/blob/c01eb7b45a8c0542986d6692458f8c81df425587/fmpy/simulation.py#L1163
+	//SetInitialValues();
 	mFmu->setupExperiment(true, mTolerance, mStartTime, true, mStopTime);
+	SetInitialValues();
 	mFmu->enterInitializationMode();
+	SetInitialValues();
 	mFmu->exitInitializationMode();
 
 	mbLoaded = true;
@@ -354,4 +354,12 @@ bool AA_FMU::ControlStep(float DeltaTime)
 	//	UE_LOG(LogTemp, Warning, TEXT("XML parsing complete for: %f"), mFMUTime);
 	//}
 	return true;
+}
+
+void AA_FMU::SetInitialValues()
+{
+	for (const TPair<FString, float>& pair : mInitialValues)
+	{
+		AA_FMU::SetReal(pair.Key, pair.Value);
+	}
 }
