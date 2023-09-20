@@ -131,7 +131,7 @@ void AA_FMU::Initialize()
 void AA_FMU::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-	delete mFmu;
+	//delete mFmu; // this causes crashes on game exit (seems depending on PC)
 }
 
 // Called every frame
