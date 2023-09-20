@@ -11,8 +11,8 @@
 
 This work was tested using the following. It may work on something else but no guarantees.
 - Windows 10
-- Unreal Engine 4.25+
-- Visual Studio 2019
+- Unreal Engine 5.3+
+- Visual Studio 2022
 - **An unzip utility on path, currently supported are unzip, 7z, tar**
 
 FMU
@@ -38,7 +38,10 @@ Follow the following steps to get this project up and running on your own comput
    - `git submodule init`
    - `git submodule update`
 1. Fix the symbolic links
-   - From `UnrealEngine-FMIPlugin/FMIPlugin/Plugins/FMIKit/ThirdParty/fmikit/src` copy the files `FMU.cpp`, `FMU1.cpp`, and `FMU2.cpp` and replace the same names files in `UnrealEngine-FMIPlugin/FMIPlugin/Plugins/FMIKit/Source/FMIKit/ThirdParty/fmikit/src`
+   - From: <br> `UnrealEngine-FMIPlugin/FMIPlugin/Plugins/FMIKit/ThirdParty/fmikit/src`
+       - Copy the files `FMU.cpp`, `FMU1.cpp`, and `FMU2.cpp` 
+   - To: <br> `UnrealEngine-FMIPlugin/FMIPlugin/Plugins/FMIKit/Source/FMIKit/ThirdParty/fmikit/src`
+       - Replace the files in which have the same names
 1. Launch the `FMIPlugin.uproject` rebuilding the project when prompted.
 1. Have fun!
   
