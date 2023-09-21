@@ -107,10 +107,8 @@ void AA_FMU::Initialize()
 	mFMUTime = mStartTime;
 
 	// not 100% sure this delete mFmu is required here.
-	if (mFmu)
-	{
-		delete mFmu;
-	}
+	AA_FMU::DestroyFMU();
+
 	// if(!mFmu) // This line with the new fmikit.... prevents (we think) issues with locked dll file. However, it messes up autolooping... need to find a better solution
 	mFmu = new fmikit::FMU2Slave(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
 	mFmu->instantiate(true);
@@ -123,7 +121,7 @@ void AA_FMU::Initialize()
 	mFmu->enterInitializationMode();
 	SetInitialValues();
 	mFmu->exitInitializationMode();
-
+	
 	mbLoaded = true;
 	UE_LOG(LogTemp, Display, TEXT("Initialization of FMU complete: %s"), *mPath.FilePath);
 }
@@ -131,14 +129,29 @@ void AA_FMU::Initialize()
 void AA_FMU::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
+
+	//AA_FMU::DestroyFMU();
+
 	//delete mFmu; // this causes crashes on game exit (seems depending on PC)
 }
 
+//void AA_FMU::BeginDestroy()
+//{
+//
+//	Super::BeginDestroy();
+//	AA_FMU::DestroyFMU();
+//}
+
+//void AA_FMU::FinishDestroy()
+//{
+//	AA_FMU::DestroyFMU();
+//	Super::FinishDestroy();
+//}
 // Called every frame
 void AA_FMU::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	// This is an option to let the user have an auto simulated model instead of blueprint control. Having issues
 	if (mAutoSimulateTick && !mPause)
 	{
@@ -361,5 +374,23 @@ void AA_FMU::SetInitialValues()
 	for (const TPair<FString, float>& pair : mInitialValues)
 	{
 		AA_FMU::SetReal(pair.Key, pair.Value);
+	}
+}
+
+void AA_FMU::DestroyFMU()
+{
+	//if (mFmu != nullptr)
+	if (mFmu)
+	{
+		try
+		{
+			mFmu->terminate();
+			mFmu->freeInstance();
+		}
+		catch (std::exception e)
+		{
+			FString errorMsg(e.what());
+			UE_LOG(LogTemp, Error, TEXT("%s"), *errorMsg);
+		}
 	}
 }

@@ -46,6 +46,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	//virtual void BeginDestroy() override;
+	//virtual void FinishDestroy() override;
 
 	// Called when actor is created or any updates are made to it
 	virtual void OnConstruction(const FTransform& Transform) override;
@@ -80,6 +82,10 @@ public:
 	// Change an FMU variable value.
 	UFUNCTION(BlueprintCallable)
 		void SetReal(FString Name, float Value);
+
+	// Terminate and free the FMU instance
+	UFUNCTION(BlueprintCallable)
+		void DestroyFMU();
 
 	// Use to specify if the internal logic is desired to run the FMU. Else control FMU solution manually.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
