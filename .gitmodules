@@ -1,3 +1,4 @@
 [submodule "FMIPlugin/Plugins/FMIKit/ThirdParty/fmikit"]
 	path = FMIPlugin/Plugins/FMIKit/ThirdParty/fmikit
 	url = https://github.com/ORNL-Modelica/FMIKit-Simulink.git
+	branch = unreal
