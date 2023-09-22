@@ -19,7 +19,7 @@ public class FMIKit : ModuleRules
     }
     //private string FMILIBPath
     //{
-    //    get { return Path.GetFullPath("C:\\Users\\green\\Documents\\FMI\\fmi-library\\build-fmil\\test"); }
+    //    get { return Path.GetFullPath(Path.Combine(ThirdPartyPath, "fmilib/")); }
     //}
     public FMIKit(ReadOnlyTargetRules Target) : base(Target)
     {
