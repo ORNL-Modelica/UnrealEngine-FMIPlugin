@@ -17,10 +17,10 @@ public class FMIKit : ModuleRules
 	{
 		get { return Path.GetFullPath(Path.Combine(ThirdPartyPath, "fmikit/")); }
     }
-    private string FMILIBPath
-    {
-        get { return Path.GetFullPath("C:\\Users\\green\\Documents\\FMI\\fmi-library\\build-fmil\\test"); }
-    }
+    //private string FMILIBPath
+    //{
+    //    get { return Path.GetFullPath("C:\\Users\\green\\Documents\\FMI\\fmi-library\\build-fmil\\test"); }
+    //}
     public FMIKit(ReadOnlyTargetRules Target) : base(Target)
     {
         bEnableExceptions = true;
@@ -71,7 +71,7 @@ public class FMIKit : ModuleRules
 			);
 
         LoadFMIKIT(Target);
-        LoadFMILIB(Target);
+        //LoadFMILIB(Target);
     }
 	
 	public bool LoadFMIKIT(ReadOnlyTargetRules Target)
@@ -88,19 +88,19 @@ public class FMIKit : ModuleRules
         return isLibrarySupported;
     }
 
-    public bool LoadFMILIB(ReadOnlyTargetRules Target)
-    {
-        bool isLibrarySupported = false;
+    //public bool LoadFMILIB(ReadOnlyTargetRules Target)
+    //{
+    //    bool isLibrarySupported = false;
 
-        if ((Target.Platform == UnrealTargetPlatform.Win64))
-        {
-            isLibrarySupported = true;
+    //    if ((Target.Platform == UnrealTargetPlatform.Win64))
+    //    {
+    //        isLibrarySupported = true;
 
-            PublicDelayLoadDLLs.Add("fmilib_shared.dll");
-            PublicAdditionalLibraries.Add(Path.Combine(FMILIBPath, "lib/fmilib_shared.lib"));
-            PublicIncludePaths.Add(Path.Combine(FMILIBPath, "include"));
-        }
+    //        PublicDelayLoadDLLs.Add("fmilib_shared.dll");
+    //        PublicAdditionalLibraries.Add(Path.Combine(FMILIBPath, "lib/fmilib_shared.lib"));
+    //        PublicIncludePaths.Add(Path.Combine(FMILIBPath, "include"));
+    //    }
 
-        return isLibrarySupported;
-    }
+    //    return isLibrarySupported;
+    //}
 }
