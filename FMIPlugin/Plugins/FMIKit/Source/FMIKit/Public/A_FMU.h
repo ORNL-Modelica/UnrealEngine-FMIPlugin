@@ -92,6 +92,8 @@ public:
 		bool mAutoSimulateTick = false;
 	// Full file path of the *.fmu file
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
+		FFilePath PathFMU;
+	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
 		FFilePath mPath;
 	// Change the simulation speed of the FMU relative to real time.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")

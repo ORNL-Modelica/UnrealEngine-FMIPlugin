@@ -49,7 +49,7 @@ void AA_FMU::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
 	Super::PostEditChangeProperty(e);
 
-	if (e.MemberProperty->GetFName().ToString() == TEXT("mPath"))
+	if (e.MemberProperty->GetFName().ToString() == TEXT("PathFMU"))
 	{
 		ExtractFMU();
 		mResults.Empty();
@@ -193,6 +193,7 @@ void AA_FMU::Tick(float DeltaTime)
 
 void AA_FMU::ExtractFMU()
 {
+	mPath = PathFMU;
 	if (mPath.FilePath.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("mPath to .fmu is empty."));
@@ -203,6 +204,12 @@ void AA_FMU::ExtractFMU()
 		UE_LOG(LogTemp, Warning, TEXT("Invalid mPath. It does not contain a `.fmu` extension."));
 		return;
 	}
+	
+	if (FPaths::IsRelative(*PathFMU.FilePath))
+	{
+		mPath.FilePath = FPaths::Combine(FPaths::ProjectContentDir(), PathFMU.FilePath);
+	}
+
 	if (!FPaths::FileExists(*mPath.FilePath))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Invalid mPath. %s not found."), *mPath.FilePath);
@@ -225,15 +232,17 @@ void AA_FMU::ExtractFMU()
 		if (cmd(exe.c_str()) comparison) {
 			mkdir(dir.c_str());
 			exe = "tar -xf \"" + sPath + "\" -C \"" + dir + "\"";
-			success = (cmd(exe.c_str()) comparison);
+			success = !(cmd(exe.c_str()) comparison);
 		}
 	}
+
 	// TODO: Dual maintenance with FmuActorComponent.cpp
 	// TODO: Add jar, minizip or other as unzip option? Use CreateProcess() instead of WinExec()?
 	FString extracted = success ? "Extracted" : "Failed to extract";
 	FString msg(exe.c_str());
 	UE_LOG(LogTemp, Display, TEXT("%s fmu using command: %s"), *extracted, *msg);
 
+	// there seems to be a race condition for unzipping where the above messages and ParseXML sometimes occur before the fmu is done unzipping...
 	ParseXML();
 }
 
