@@ -49,7 +49,7 @@ void AA_FMU::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
 	Super::PostEditChangeProperty(e);
 
-	if (e.MemberProperty->GetFName().ToString() == TEXT("mPath"))
+	if (e.MemberProperty->GetFName().ToString() == TEXT("PathFMU"))
 	{
 		ExtractFMU();
 		mResults.Empty();
@@ -106,13 +106,11 @@ void AA_FMU::Initialize()
 	mTimeLast = 0.0;
 	mFMUTime = mStartTime;
 
-	// not 100% sure this delete mFmu is required here.
-	if (mFmu)
-	{
-		delete mFmu;
-	}
+	// Believe this is no longer needed
+	//AA_FMU::DestroyFMU();
+
 	// if(!mFmu) // This line with the new fmikit.... prevents (we think) issues with locked dll file. However, it messes up autolooping... need to find a better solution
-	mFmu = new fmikit::FMU2Slave(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
+	mFmu = std::make_unique<fmikit::FMU2Slave>(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
 	mFmu->instantiate(true);
 
 	// Initial values seem to be required to be set at multiple places
@@ -123,7 +121,7 @@ void AA_FMU::Initialize()
 	mFmu->enterInitializationMode();
 	SetInitialValues();
 	mFmu->exitInitializationMode();
-
+	
 	mbLoaded = true;
 	UE_LOG(LogTemp, Display, TEXT("Initialization of FMU complete: %s"), *mPath.FilePath);
 }
@@ -131,14 +129,13 @@ void AA_FMU::Initialize()
 void AA_FMU::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-	//delete mFmu; // this causes crashes on game exit (seems depending on PC)
 }
 
 // Called every frame
 void AA_FMU::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	// This is an option to let the user have an auto simulated model instead of blueprint control. Having issues
 	if (mAutoSimulateTick && !mPause)
 	{
@@ -180,6 +177,7 @@ void AA_FMU::Tick(float DeltaTime)
 
 void AA_FMU::ExtractFMU()
 {
+	mPath = PathFMU;
 	if (mPath.FilePath.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("mPath to .fmu is empty."));
@@ -190,6 +188,12 @@ void AA_FMU::ExtractFMU()
 		UE_LOG(LogTemp, Warning, TEXT("Invalid mPath. It does not contain a `.fmu` extension."));
 		return;
 	}
+	
+	if (FPaths::IsRelative(*PathFMU.FilePath))
+	{
+		mPath.FilePath = FPaths::Combine(FPaths::ProjectContentDir(), PathFMU.FilePath);
+	}
+
 	if (!FPaths::FileExists(*mPath.FilePath))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Invalid mPath. %s not found."), *mPath.FilePath);
@@ -212,21 +216,31 @@ void AA_FMU::ExtractFMU()
 		if (cmd(exe.c_str()) comparison) {
 			mkdir(dir.c_str());
 			exe = "tar -xf \"" + sPath + "\" -C \"" + dir + "\"";
-			success = (cmd(exe.c_str()) comparison);
+			success = !(cmd(exe.c_str()) comparison);
 		}
 	}
+
 	// TODO: Dual maintenance with FmuActorComponent.cpp
 	// TODO: Add jar, minizip or other as unzip option? Use CreateProcess() instead of WinExec()?
 	FString extracted = success ? "Extracted" : "Failed to extract";
 	FString msg(exe.c_str());
 	UE_LOG(LogTemp, Display, TEXT("%s fmu using command: %s"), *extracted, *msg);
 
+	// there seems to be a race condition for unzipping where the above messages and ParseXML sometimes occur before the fmu is done unzipping...
 	ParseXML();
 }
 
 void AA_FMU::ParseXML()
 {
 	FString xmlFile = mUnzipDir + "/modelDescription.xml";
+
+	// Add loop to avoid race conditions where the unzip process has not completed
+	int counter = 0;
+	while (!FPaths::FileExists(*xmlFile) && counter < 5) {
+		UE_LOG(LogTemp, Error, TEXT("Attempting to parse XML"), *xmlFile);
+		Sleep(100);
+		counter++;
+	}
 
 	if (!FPaths::FileExists(*xmlFile))
 	{

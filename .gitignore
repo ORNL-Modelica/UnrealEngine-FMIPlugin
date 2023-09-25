@@ -77,7 +77,6 @@ BouncingBall/
 ies/
 FMIPlugin/Content/
 FMIPlugin/Brushify_Shaders.png
-testBP_A_FMU_auto/
-testBP_A_FMU_autoLooping/
-testBP_A_FMU_manual/
-testA_FMU*
+testBP_A_FMU*/
+testA_FMU*/
+FMIPlugin/Plugins/FMIKit/ThirdParty/fmilib/

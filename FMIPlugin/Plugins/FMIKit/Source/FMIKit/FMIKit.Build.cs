@@ -2,7 +2,9 @@
 
 using System;
 using System.IO;
+using System.Runtime.Intrinsics.X86;
 using UnrealBuildTool;
+//using static System.Net.Mime.MediaTypeNames;
 
 public class FMIKit : ModuleRules
 {
@@ -14,11 +16,14 @@ public class FMIKit : ModuleRules
 	private string FMIKitPath
 	{
 		get { return Path.GetFullPath(Path.Combine(ThirdPartyPath, "fmikit/")); }
-	}
-
-	public FMIKit(ReadOnlyTargetRules Target) : base(Target)
-	{
-		bEnableExceptions = true;
+    }
+    //private string FMILIBPath
+    //{
+    //    get { return Path.GetFullPath(Path.Combine(ThirdPartyPath, "fmilib/")); }
+    //}
+    public FMIKit(ReadOnlyTargetRules Target) : base(Target)
+    {
+        bEnableExceptions = true;
 
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -27,17 +32,14 @@ public class FMIKit : ModuleRules
 				// ... add public include paths required here ...
 			}
 			);
-				
-		
-		PrivateIncludePaths.AddRange(
+
+        PrivateIncludePaths.AddRange(
 			new string[] {
-				Path.Combine(FMIKitPath, "Include"),
 				// ... add other private include paths required here ...
 			}
 			);
-			
-		
-		PublicDependencyModuleNames.AddRange(
+
+        PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
 				"Core",
@@ -67,11 +69,12 @@ public class FMIKit : ModuleRules
 				// ... add any modules that your module loads dynamically here ...
 			}
 			);
-			
-		LoadLib(Target);
-	}
+
+        LoadFMIKIT(Target);
+        //LoadFMILIB(Target);
+    }
 	
-	public bool LoadLib(ReadOnlyTargetRules Target)
+	public bool LoadFMIKIT(ReadOnlyTargetRules Target)
     {
         bool isLibrarySupported = false;
 
@@ -79,11 +82,25 @@ public class FMIKit : ModuleRules
         {
             isLibrarySupported = true;
 
-
-			// FMIKit
 			PublicIncludePaths.Add(Path.Combine(FMIKitPath, "Include"));
         }
 
         return isLibrarySupported;
     }
+
+    //public bool LoadFMILIB(ReadOnlyTargetRules Target)
+    //{
+    //    bool isLibrarySupported = false;
+
+    //    if ((Target.Platform == UnrealTargetPlatform.Win64))
+    //    {
+    //        isLibrarySupported = true;
+
+    //        PublicDelayLoadDLLs.Add("fmilib_shared.dll");
+    //        PublicAdditionalLibraries.Add(Path.Combine(FMILIBPath, "lib/fmilib_shared.lib"));
+    //        PublicIncludePaths.Add(Path.Combine(FMILIBPath, "include"));
+    //    }
+
+    //    return isLibrarySupported;
+    //}
 }
