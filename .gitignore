@@ -72,11 +72,8 @@ Build/*/**
 **/DerivedDataCache
 
 # .fmu extraction folders
-test/
-BouncingBall/
-ies/
+**/fmus
+
+# Ignore primary project content (just a pass-through for the plugin)
 FMIPlugin/Content/
 FMIPlugin/Brushify_Shaders.png
-testBP_A_FMU*/
-testA_FMU*/
-FMIPlugin/Plugins/FMIKit/ThirdParty/fmilib/
