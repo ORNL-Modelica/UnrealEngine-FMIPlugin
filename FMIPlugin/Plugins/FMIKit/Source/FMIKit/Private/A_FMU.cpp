@@ -110,8 +110,7 @@ void AA_FMU::Initialize()
 	//AA_FMU::DestroyFMU();
 
 	// if(!mFmu) // This line with the new fmikit.... prevents (we think) issues with locked dll file. However, it messes up autolooping... need to find a better solution
-	mFmu = new fmikit::FMU2Slave(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
-	//mFmu = std::make_unique<fmikit::FMU2Slave>(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
+	mFmu = std::make_unique<fmikit::FMU2Slave>(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
 	mFmu->instantiate(true);
 
 	// Initial values seem to be required to be set at multiple places
@@ -130,9 +129,6 @@ void AA_FMU::Initialize()
 void AA_FMU::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-
-	AA_FMU::DestroyFMU();
-
 }
 
 // Called every frame
@@ -382,22 +378,5 @@ void AA_FMU::SetInitialValues()
 	for (const TPair<FString, float>& pair : mInitialValues)
 	{
 		AA_FMU::SetReal(pair.Key, pair.Value);
-	}
-}
-
-void AA_FMU::DestroyFMU()
-{
-	//if (mFmu != nullptr)
-	if (mFmu)
-	{
-		try
-		{
-			delete mFmu;
-		}
-		catch (std::exception e)
-		{
-			FString errorMsg(e.what());
-			UE_LOG(LogTemp, Error, TEXT("%s"), *errorMsg);
-		}
 	}
 }

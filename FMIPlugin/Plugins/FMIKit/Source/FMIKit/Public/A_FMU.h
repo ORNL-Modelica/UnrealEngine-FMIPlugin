@@ -81,10 +81,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SetReal(FString Name, float Value);
 
-	// Terminate and free the FMU instance
-	UFUNCTION(BlueprintCallable)
-		void DestroyFMU();
-
 	// Use to specify if the internal logic is desired to run the FMU. Else control FMU solution manually.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FMU Settings")
 		bool mAutoSimulateTick = false;
@@ -147,8 +143,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
 		float mFMUTime;
 private:
-	fmikit::FMU2Slave* mFmu = nullptr;
-	//std::unique_ptr<fmikit::FMU2Slave> mFmu = nullptr;
+	std::unique_ptr<fmikit::FMU2Slave> mFmu = nullptr;
 	bool mbLoaded = false;
 	
 	fmi2Real mTimeLast;
