@@ -239,10 +239,7 @@ void AA_FMU::ParseXML()
 	while (!FPaths::FileExists(*xmlFile) && counter < 5) {
 		UE_LOG(LogTemp, Error, TEXT("Attempting to parse XML"), *xmlFile);
 		Sleep(100);
-
 		counter++;
-		/*if (counter > 5)
-			break;*/
 	}
 
 	if (!FPaths::FileExists(*xmlFile))
