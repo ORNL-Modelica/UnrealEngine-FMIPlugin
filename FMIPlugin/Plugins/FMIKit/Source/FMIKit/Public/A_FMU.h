@@ -46,8 +46,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	//virtual void BeginDestroy() override;
-	//virtual void FinishDestroy() override;
 
 	// Called when actor is created or any updates are made to it
 	virtual void OnConstruction(const FTransform& Transform) override;
@@ -150,7 +148,7 @@ public:
 		float mFMUTime;
 private:
 	fmikit::FMU2Slave* mFmu = nullptr;
-
+	//std::unique_ptr<fmikit::FMU2Slave> mFmu = nullptr;
 	bool mbLoaded = false;
 	
 	fmi2Real mTimeLast;

@@ -106,11 +106,12 @@ void AA_FMU::Initialize()
 	mTimeLast = 0.0;
 	mFMUTime = mStartTime;
 
-	// not 100% sure this delete mFmu is required here.
-	AA_FMU::DestroyFMU();
+	// Believe this is no longer needed
+	//AA_FMU::DestroyFMU();
 
 	// if(!mFmu) // This line with the new fmikit.... prevents (we think) issues with locked dll file. However, it messes up autolooping... need to find a better solution
 	mFmu = new fmikit::FMU2Slave(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
+	//mFmu = std::make_unique<fmikit::FMU2Slave>(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
 	mFmu->instantiate(true);
 
 	// Initial values seem to be required to be set at multiple places
@@ -130,23 +131,10 @@ void AA_FMU::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	//AA_FMU::DestroyFMU();
+	AA_FMU::DestroyFMU();
 
-	//delete mFmu; // this causes crashes on game exit (seems depending on PC)
 }
 
-//void AA_FMU::BeginDestroy()
-//{
-//
-//	Super::BeginDestroy();
-//	AA_FMU::DestroyFMU();
-//}
-
-//void AA_FMU::FinishDestroy()
-//{
-//	AA_FMU::DestroyFMU();
-//	Super::FinishDestroy();
-//}
 // Called every frame
 void AA_FMU::Tick(float DeltaTime)
 {
@@ -249,6 +237,17 @@ void AA_FMU::ExtractFMU()
 void AA_FMU::ParseXML()
 {
 	FString xmlFile = mUnzipDir + "/modelDescription.xml";
+
+	// Add loop to avoid race conditions where the unzip process has not completed
+	int counter = 0;
+	while (!FPaths::FileExists(*xmlFile) && counter < 5) {
+		UE_LOG(LogTemp, Error, TEXT("Attempting to parse XML"), *xmlFile);
+		Sleep(100);
+
+		counter++;
+		/*if (counter > 5)
+			break;*/
+	}
 
 	if (!FPaths::FileExists(*xmlFile))
 	{
@@ -393,8 +392,7 @@ void AA_FMU::DestroyFMU()
 	{
 		try
 		{
-			mFmu->terminate();
-			mFmu->freeInstance();
+			delete mFmu;
 		}
 		catch (std::exception e)
 		{
