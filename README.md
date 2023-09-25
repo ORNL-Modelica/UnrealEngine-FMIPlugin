@@ -37,6 +37,7 @@ Follow the following steps to get this project up and running on your own comput
    - `cd` to repo
    - `git submodule init`
    - `git submodule update`
+       - `git submodule update --remote` to grab the latest commits instead of specific commit
 1. Fix the symbolic links
    - From: <br> `UnrealEngine-FMIPlugin/FMIPlugin/Plugins/FMIKit/ThirdParty/fmikit/src`
        - Copy the files `FMU.cpp`, `FMU1.cpp`, and `FMU2.cpp` 
