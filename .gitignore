@@ -72,7 +72,7 @@ Build/*/**
 **/DerivedDataCache
 
 # .fmu extraction folders
-**/fmus
+DemoUEFMIPlugin/fmus
 
 # Ignore primary project content (just a pass-through for the plugin)
 DemoUEFMIPlugin/Content/
