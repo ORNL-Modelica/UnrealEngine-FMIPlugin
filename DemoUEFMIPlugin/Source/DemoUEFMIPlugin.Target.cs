@@ -3,12 +3,12 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class FMIPluginTarget : TargetRules
+public class DemoUEFMIPluginTarget : TargetRules
 {
-	public FMIPluginTarget( TargetInfo Target) : base(Target)
+	public DemoUEFMIPluginTarget( TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
-		ExtraModuleNames.AddRange( new string[] { "FMIPlugin" } );
+		ExtraModuleNames.AddRange( new string[] { "DemoUEFMIPlugin" } );
 	}
 }

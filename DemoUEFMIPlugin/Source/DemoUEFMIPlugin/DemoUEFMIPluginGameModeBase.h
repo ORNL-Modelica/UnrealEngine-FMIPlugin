@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "FMIPluginGameModeBase.generated.h"
+#include "DemoUEFMIPluginGameModeBase.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class FMIPLUGIN_API AFMIPluginGameModeBase : public AGameModeBase
+class DEMOUEFMIPLUGIN_API ADemoProjectGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	

@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class FMIPlugin : ModuleRules
+public class DemoUEFMIPlugin : ModuleRules
 {
-	public FMIPlugin(ReadOnlyTargetRules Target) : base(Target)
+	public DemoUEFMIPlugin(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	

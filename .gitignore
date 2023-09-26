@@ -75,5 +75,5 @@ Build/*/**
 **/fmus
 
 # Ignore primary project content (just a pass-through for the plugin)
-FMIPlugin/Content/
-FMIPlugin/Brushify_Shaders.png
+DemoUEFMIPlugin/Content/
+DemoUEFMIPlugin/Brushify_Shaders.png
