@@ -256,9 +256,8 @@ void AA_FMU::ParseXML()
 		return;
 	}
 
-	FXmlFile model(xmlFile, EConstructMethod::ConstructFromFile);
-
 	// fmiModelDescription (root)
+	FXmlFile model(xmlFile, EConstructMethod::ConstructFromFile);
 	FXmlNode* root = model.GetRootNode();
 	mFMIVersion = *root->GetAttribute("fmiVersion");
 	mModelIdentifier = *root->GetAttribute("modelName");
@@ -313,28 +312,6 @@ void AA_FMU::ParseXML()
 
 	UE_LOG(LogTemp, Display, TEXT("XML parsing complete for: %s"), *mModelIdentifier);
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("XML parsing complete for: %s"), *tests); // Does not work in VS2019
-}
-
-void AA_FMU::GetModelDescription()
-{
-	if (mPath.FilePath.IsEmpty())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("mPath to .fmu is empty."));
-		return;
-	}
-
-	std::string sPath = TCHAR_TO_UTF8(*mPath.FilePath);
-	size_t lastindex = sPath.find_last_of(".");
-	mUnzipDir = UTF8_TO_TCHAR(sPath.substr(0, lastindex).c_str());
-
-	FString xmlFile = mUnzipDir + "/modelDescription.xml";
-	FXmlFile model(xmlFile, EConstructMethod::ConstructFromFile);
-
-	// fmiModelDescription (root)
-	FXmlNode* root = model.GetRootNode();
-	mFMIVersion = *root->GetAttribute("fmiVersion");
-	mModelIdentifier = *root->GetAttribute("modelName");
-	mGuid = *root->GetAttribute("guid");
 }
 
 float AA_FMU::GetReal(FString Name)
