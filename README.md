@@ -4,7 +4,7 @@
 
 # Background
 - An interface for interacting with Functional Mockup Units (FMUs) in Unreal Engine.
-  -  An FMU is code that has been packaged according to the [Functional Mockup Interface[(https://fmi-standard.org/)], a free and open-source standard for exchanging dynamic (i.e., time-dependent) simulation models.
+  -  An FMU is code that has been packaged according to the [Functional Mockup Interface](https://fmi-standard.org/), a free and open-source standard for exchanging dynamic (i.e., time-dependent) simulation models.
 - The UEFMI plugin allows the use of dynamic simulation models directly in a Unreal Engine project.
 
 # Prerequisites
