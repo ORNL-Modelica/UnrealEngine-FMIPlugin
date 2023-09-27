@@ -29,37 +29,25 @@ This work was tested using the following. It may work on something else but no g
 
 # Installation
 
-This repostory provides the plugin ready to be used in an example project. To use in a new project, copy and paste the the `UEFMI` plugin folder (at `DemoUEFMIPlugin/Plugins/UEFMI`) into the `Plugin` folder of your project.
+> This repostory provides the plugin ready to be used in an example project.
 
-To get this project use one of the following methods:
- - Method 1 - manual copying of third party files.
- - Method 2 - symbolic links (can be tricky. So if you are not familiar with them it is recommended to use Method 1.)
+> To use in a new project, copy and paste the the `UEFMI` plugin folder (at `DemoUEFMIPlugin/Plugins/UEFMI`) into the `Plugin` folder of your project.
 
-**Method 1**
 1. Clone the repository with FMIKit submodule
    - `git clone https://github.com/ORNL-Modelica/UnrealEngine-FMIPlugin.git`
    - `cd` to repo
    - `git submodule init`
    - `git submodule update`
        - `git submodule update --remote` to grab the latest commits instead of specific commit
-1. Replace the symbolic links with c++ code
-   - From: <br> `UnrealEngine-FMIPlugin/DemoUEFMIPlugin/Plugins/FMIKit/ThirdParty/fmikit/src`
-       - Copy the files `FMU.cpp`, `FMU1.cpp`, and `FMU2.cpp` 
-   - To: <br> `UnrealEngine-FMIPlugin/DemoUEFMIPlugin/Plugins/FMIKit/Source/FMIKit/ThirdParty/fmikit/src`
-       - Replace the files in which have the same names
+1. Copy the necessary 3rd party files to the UE plugin source folder (choose one option):
+   - **Auto**: 
+     - Run `setup.bat` (Windows) or `setup.sh` (Linux)
+   - **Manual**:
+     - Copy files: <br>`FMU.cpp`, `FMU1.cpp`, `FMU2.cpp` 
+     - From: <br> `UnrealEngine-FMIPlugin/DemoUEFMIPlugin/Plugins/FMIKit/ThirdParty/fmikit/src`
+     - To: <br> `UnrealEngine-FMIPlugin/DemoUEFMIPlugin/Plugins/FMIKit/Source/FMIKit/ThirdParty/fmikit/src`
 1. Launch the `DemoUEFMIPlugin.uproject` rebuilding the project when prompted.
-  
-**Method 2**
-1. Clone the repository
-  - `git submodule update --init`
-  - FMU[1/2].cpp are symlinks 
-    - copy the submodule files over the links (text files) **OR**
-    - it may be necessary to turn `symlinks = true` in `.git/config`.
-    - it may be necessary to have installed git with enable symlinks.
-    - it may be necessary to clone or run "`git reset HEAD --hard`" as administrator 
-- Open the project `DemoUEFMIPlugin.uproject` by double-clicking the file.
-- When prompted, rebuild the project click `Yes`.
-  - The project will build and then launch Unreal Engine.
+   - Or right-click `DemoUEFMIPlugin.uproject` and select `Generate Visual Studio project files` and then open `DemoUEFMIPlugin.sln`
 
 ## Test Installation
 
