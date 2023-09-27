@@ -3,9 +3,13 @@
 [![FMU_BP_example](./resources/images/fmuUEBP.PNG)](https://youtu.be/r3NeJKJt4Z8)
 
 # Background
-- An interface for interacting with Functional Mockup Units (FMUs) in Unreal Engine.
-  -  An FMU is code that has been packaged according to the [Functional Mockup Interface](https://fmi-standard.org/), a free and open-source standard for exchanging dynamic (i.e., time-dependent) simulation models.
-- The UEFMI plugin allows the use of dynamic simulation models directly in a Unreal Engine project.
+- The UEFMI plugin allows for the use of dynamic simulation models via Functional Mockup Units (FMUs) directly in an Unreal Engine project.
+- An FMU is code that has been packaged according to the [Functional Mockup Interface](https://fmi-standard.org/), a free and open-source standard for exchanging dynamic (i.e., time-dependent) simulation models.
+- Common examples of models that get packaged into FMUs are:
+  - Physics based vehicle simulators (e.g., drive train, HVAC, water vehicles, etc.)
+  - Energy systems (e.g., power plants, buildings)
+  - Space systems (e.g., solar sail mechanics, propulsion systems)
+  - And many many more...
 
 # Prerequisites
 
