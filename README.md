@@ -29,25 +29,37 @@ This work was tested using the following. It may work on something else but no g
 
 # Installation
 
-> To use in a new project, create a project and copy or clone this entire repostory into `Plugins/UEFMI`.
+> As a plugin, UEFMI is intended to be used inside an existing Unreal Engine project!
 
-1. Create an Unreal Engine project and do the following steps into `Plugins/UEFMI` or do separately and copy into `Plugins/UEFMI`.
-  - If needed to modify the plugin, right-click `YOURPROJECT.uproject` and select `Generate Visual Studio project files` and then open `YOURPROJECT.sln`
-1. Clone the repository with FMIKit submodule
-   - `git clone https://github.com/ORNL-Modelica/UnrealEngine-FMIPlugin.git`
-   - `cd` to repo
-   - `git submodule init`
-   - `git submodule update`
-       - `git submodule update --remote` to grab the latest commits instead of specific commit
-1. Copy the necessary 3rd party files to the UE plugin source folder (choose one option):
+The process below will go through the steps to adding the plugin to a new Unreal Engine project.
+
+1. Create an Unreal Engine project. Fror illustration purposes let's call it `MYPROJECT`.
+    - Go to the project `MYPROJECT` folder and create a `Plugins` folder if it doesn't exist.
+    ```
+    cd MYPROJECT
+    mkdir Plugins
+    ```
+
+1. Clone the repository and submodules. To do that, in the ``MYPROJECT/Plugins` folder:
+   ```
+   cd Plugins
+   git clone https://github.com/ORNL-Modelica/UnrealEngine-FMIPlugin.git UEFMI`
+   cd UEFMI
+   git submodule init
+   git submodule update
+   ```
+   - Note:
+     - `git submodule update --remote` to grab the latest commits instead of specific commit
+1. Copy the files from the submodule to the `UEFMI` plugin source folder (choose one option). In `MYPROJECT/Plugins/UEFMI` folder:
    - **Auto**: 
      - Run `setup.bat` (Windows) or `setup.sh` (Linux)
    - **Manual**:
      - Copy files: <br>`FMU.cpp`, `FMU1.cpp`, `FMU2.cpp` 
      - From: <br> `ThirdParty/fmikit/src`
-     - To: <br> `Source/FMIKit/ThirdParty/fmikit/src`
-1. Create an Unreal Engine project and place the Launch the `DemoUEFMIPlugin.uproject` rebuilding the project when prompted.
-   - Or right-click `DemoUEFMIPlugin.uproject` and select `Generate Visual Studio project files` and then open `DemoUEFMIPlugin.sln`
+     - To: <br> `Source/UEFMI/ThirdParty/fmikit/src`
+1. Run the Unreal Engine project
+   - Double click `MYPROJECT.uproject` and rebuild the plugin if prompted.
+   - Or right-click `MYPROJECT.uproject` and select `Generate Visual Studio project files` and then open `MYPROJECT.sln`
 
 ## Test Installation
 
