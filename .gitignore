@@ -72,11 +72,6 @@ Build/*/**
 **/DerivedDataCache
 
 # .fmu extraction folders
-test/
-BouncingBall/
-ies/
 FMIPlugin/Content/
 FMIPlugin/Brushify_Shaders.png
-testBP_A_FMU_auto/
-testBP_A_FMU_autoLooping/
-testBP_A_FMU_manual/
+FMIPlugin/fmus/*

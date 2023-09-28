@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,7 +49,7 @@ void AA_FMU::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
 	Super::PostEditChangeProperty(e);
 
-	if (e.MemberProperty->GetFName().ToString() == TEXT("mPath"))
+	if (e.MemberProperty->GetFName().ToString() == TEXT("PathFMU"))
 	{
 		ExtractFMU();
 		mResults.Empty();
@@ -95,7 +95,7 @@ void AA_FMU::BeginPlay()
 
 	//SetActorTickInterval(1.f);
 	Super::BeginPlay();
-	
+
 	Initialize();
 }
 
@@ -106,13 +106,11 @@ void AA_FMU::Initialize()
 	mTimeLast = 0.0;
 	mFMUTime = mStartTime;
 
-	// not 100% sure this delete mFmu is required here.
-	if (mFmu)
-	{
-		delete mFmu;
-	}
+	// Believe this is no longer needed
+	//AA_FMU::DestroyFMU();
+
 	// if(!mFmu) // This line with the new fmikit.... prevents (we think) issues with locked dll file. However, it messes up autolooping... need to find a better solution
-	mFmu = new fmikit::FMU2Slave(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
+	mFmu = std::make_unique<fmikit::FMU2Slave>(TCHAR_TO_UTF8(*mGuid), TCHAR_TO_UTF8(*mModelIdentifier), TCHAR_TO_UTF8(*mUnzipDir), TCHAR_TO_UTF8(*mInstanceName));
 	mFmu->instantiate(true);
 
 	// Initial values seem to be required to be set at multiple places
@@ -131,7 +129,6 @@ void AA_FMU::Initialize()
 void AA_FMU::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-	//delete mFmu; // this causes crashes on game exit (seems depending on PC)
 }
 
 // Called every frame
@@ -170,7 +167,7 @@ void AA_FMU::Tick(float DeltaTime)
 				}
 			}
 		}
-		catch(std::exception e)
+		catch (std::exception e)
 		{
 			FString errorMsg(e.what());
 			UE_LOG(LogTemp, Error, TEXT("%s"), *errorMsg);
@@ -180,6 +177,7 @@ void AA_FMU::Tick(float DeltaTime)
 
 void AA_FMU::ExtractFMU()
 {
+	mPath = PathFMU;
 	if (mPath.FilePath.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("mPath to .fmu is empty."));
@@ -190,20 +188,34 @@ void AA_FMU::ExtractFMU()
 		UE_LOG(LogTemp, Warning, TEXT("Invalid mPath. It does not contain a `.fmu` extension."));
 		return;
 	}
+
+	if (FPaths::IsRelative(*PathFMU.FilePath))
+	{
+		mPath.FilePath = FPaths::Combine(FPaths::ProjectContentDir(), PathFMU.FilePath);
+	}
+
 	if (!FPaths::FileExists(*mPath.FilePath))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Invalid mPath. %s not found."), *mPath.FilePath);
 		return;
 	}
 
-    mPath.FilePath = FPaths::ConvertRelativePathToFull(mPath.FilePath);
+	// Gather parts of FMU path
+	mPath.FilePath = FPaths::ConvertRelativePathToFull(mPath.FilePath);
+	FString pathPart, filename, extension;
+	FPaths::Split(mPath.FilePath, pathPart, filename, extension);
 	std::string sPath = TCHAR_TO_UTF8(*mPath.FilePath);
-	size_t lastindex = sPath.find_last_of(".");
 
-	FString actorName = GetName(); // added in case multiple FMUs
-	mUnzipDir = UTF8_TO_TCHAR(sPath.substr(0, lastindex).c_str()) + actorName;
-	
-	// attempt to use unzip, then 7z, then tar
+	// Define path for extracted the FMU
+	FString exDir = FPaths::ProjectDir() + "/fmus/"; // Directory to extract FMU
+	if (!(FPaths::DirectoryExists(exDir))) {
+		std::string tempString = TCHAR_TO_UTF8(*exDir);
+		mkdir(tempString.c_str());
+	}
+	FString actorName = GetName(); // added in case of multiple FMUs
+	mUnzipDir = exDir + filename + actorName;
+
+	// Extract the FMU: attempt to use unzip, then 7z, then tar
 	std::string dir = TCHAR_TO_UTF8(*mUnzipDir);
 	std::string exe = "unzip " + sPath + " -d " + dir;
 	bool success = true;
@@ -212,15 +224,17 @@ void AA_FMU::ExtractFMU()
 		if (cmd(exe.c_str()) comparison) {
 			mkdir(dir.c_str());
 			exe = "tar -xf \"" + sPath + "\" -C \"" + dir + "\"";
-			success = (cmd(exe.c_str()) comparison);
+			success = !(cmd(exe.c_str()) comparison);
 		}
 	}
+
 	// TODO: Dual maintenance with FmuActorComponent.cpp
 	// TODO: Add jar, minizip or other as unzip option? Use CreateProcess() instead of WinExec()?
 	FString extracted = success ? "Extracted" : "Failed to extract";
 	FString msg(exe.c_str());
 	UE_LOG(LogTemp, Display, TEXT("%s fmu using command: %s"), *extracted, *msg);
 
+	// there seems to be a race condition for unzipping where the above messages and ParseXML sometimes occur before the fmu is done unzipping...
 	ParseXML();
 }
 
@@ -228,15 +242,22 @@ void AA_FMU::ParseXML()
 {
 	FString xmlFile = mUnzipDir + "/modelDescription.xml";
 
+	// Add loop to avoid race conditions where the unzip process has not completed
+	int counter = 0;
+	while (!FPaths::FileExists(*xmlFile) && counter < 5) {
+		UE_LOG(LogTemp, Error, TEXT("Attempting to parse XML"), *xmlFile);
+		Sleep(100);
+		counter++;
+	}
+
 	if (!FPaths::FileExists(*xmlFile))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Invalid mPath. %s not found. Make sure a supported unzip tool is on the PATH"), *xmlFile);
 		return;
 	}
 
-	FXmlFile model(xmlFile, EConstructMethod::ConstructFromFile);
-
 	// fmiModelDescription (root)
+	FXmlFile model(xmlFile, EConstructMethod::ConstructFromFile);
 	FXmlNode* root = model.GetRootNode();
 	mFMIVersion = *root->GetAttribute("fmiVersion");
 	mModelIdentifier = *root->GetAttribute("modelName");
@@ -291,28 +312,6 @@ void AA_FMU::ParseXML()
 
 	UE_LOG(LogTemp, Display, TEXT("XML parsing complete for: %s"), *mModelIdentifier);
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("XML parsing complete for: %s"), *tests); // Does not work in VS2019
-}
-
-void AA_FMU::GetModelDescription()
-{
-	if (mPath.FilePath.IsEmpty())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("mPath to .fmu is empty."));
-		return;
-	}
-
-	std::string sPath = TCHAR_TO_UTF8(*mPath.FilePath);
-	size_t lastindex = sPath.find_last_of(".");
-	mUnzipDir = UTF8_TO_TCHAR(sPath.substr(0, lastindex).c_str());
-
-	FString xmlFile = mUnzipDir + "/modelDescription.xml";
-	FXmlFile model(xmlFile, EConstructMethod::ConstructFromFile);
-
-	// fmiModelDescription (root)
-	FXmlNode* root = model.GetRootNode();
-	mFMIVersion = *root->GetAttribute("fmiVersion");
-	mModelIdentifier = *root->GetAttribute("modelName");
-	mGuid = *root->GetAttribute("guid");
 }
 
 float AA_FMU::GetReal(FString Name)

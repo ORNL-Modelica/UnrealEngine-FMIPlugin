@@ -1,6 +1,6 @@
 # UnrealEngine-FMIPlugin
 
-![FMUinUE4](docs/fmuUEBP.PNG)
+![FMUinUE4](./resources/docs/fmuUEBP.PNG)
 
 - A MVP (minimally viable product) of simulating FMUs within the Unreal Engine environment.
 - This MVP relies on the [FMIKit repository](https://github.com/CATIA-Systems/FMIKit-Simulink) (non-simulink portion)
