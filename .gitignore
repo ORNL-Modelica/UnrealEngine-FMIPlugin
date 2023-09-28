@@ -70,10 +70,3 @@ Build/*/**
 
 # Cache files for the editor to use
 **/DerivedDataCache
-
-# .fmu extraction folders
-DemoUEFMIPlugin/fmus
-
-# Ignore primary project content (just a pass-through for the plugin)
-DemoUEFMIPlugin/Content/
-DemoUEFMIPlugin/Brushify_Shaders.png

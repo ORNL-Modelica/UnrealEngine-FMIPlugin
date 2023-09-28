@@ -1,6 +1,6 @@
 # Unreal Engine - FMI Plugin (UEFMI)
 
-[![FMU_BP_example](./resources/images/fmuUEBP.PNG)](https://youtu.be/r3NeJKJt4Z8)
+[![FMU_BP_example](./PluginAssets/images/fmuUEBP.PNG)](https://youtu.be/r3NeJKJt4Z8)
 
 # Background
 - The UEFMI plugin allows for the use of dynamic simulation models via Functional Mockup Units (FMUs) directly in an Unreal Engine project.
@@ -21,7 +21,7 @@ This work was tested using the following. It may work on something else but no g
 
 # `A_FMU` -> The Workhorse
 
-`A_FMU` under [`UEFMI C++ Classes/UEFMI/Public`](./DemoUEFMIPlugin/Plugins/UEFMI/Source/UEFMI/Private/A_FMU.cpp) contains the magic to make the FMU run. Users are highly encouraged to look at `A_FMU.cpp` if they need to understand more intimately the implementation. A couple important notes are:
+`A_FMU` under [`UEFMI C++ Classes/UEFMI/Public`](./Source/UEFMI/Private/A_FMU.cpp) contains the magic to make the FMU run. Users are highly encouraged to look at `A_FMU.cpp` if they need to understand more intimately the implementation. A couple important notes are:
 - `PathFMU` is the location of the FMU and supports relative or absolute paths. 
 - `mResults` returns the results requested from the variables added to `mStoredVariables`.
   - `mResults` only returns values when `mAutoSimulateTick` = True. Else it is empty and variables must be be retrieved using the `GetReal()` function.
@@ -29,10 +29,10 @@ This work was tested using the following. It may work on something else but no g
 
 # Installation
 
-> This repostory provides the plugin ready to be used in an example project.
+> To use in a new project, create a project and copy or clone this entire repostory into `Plugins/UEFMI`.
 
-> To use in a new project, copy and paste the the `UEFMI` plugin folder (at `DemoUEFMIPlugin/Plugins/UEFMI`) into the `Plugin` folder of your project.
-
+1. Create an Unreal Engine project and do the following steps into `Plugins/UEFMI` or do separately and copy into `Plugins/UEFMI`.
+  - If needed to modify the plugin, right-click `YOURPROJECT.uproject` and select `Generate Visual Studio project files` and then open `YOURPROJECT.sln`
 1. Clone the repository with FMIKit submodule
    - `git clone https://github.com/ORNL-Modelica/UnrealEngine-FMIPlugin.git`
    - `cd` to repo
@@ -44,9 +44,9 @@ This work was tested using the following. It may work on something else but no g
      - Run `setup.bat` (Windows) or `setup.sh` (Linux)
    - **Manual**:
      - Copy files: <br>`FMU.cpp`, `FMU1.cpp`, `FMU2.cpp` 
-     - From: <br> `UnrealEngine-FMIPlugin/DemoUEFMIPlugin/Plugins/FMIKit/ThirdParty/fmikit/src`
-     - To: <br> `UnrealEngine-FMIPlugin/DemoUEFMIPlugin/Plugins/FMIKit/Source/FMIKit/ThirdParty/fmikit/src`
-1. Launch the `DemoUEFMIPlugin.uproject` rebuilding the project when prompted.
+     - From: <br> `ThirdParty/fmikit/src`
+     - To: <br> `Source/FMIKit/ThirdParty/fmikit/src`
+1. Create an Unreal Engine project and place the Launch the `DemoUEFMIPlugin.uproject` rebuilding the project when prompted.
    - Or right-click `DemoUEFMIPlugin.uproject` and select `Generate Visual Studio project files` and then open `DemoUEFMIPlugin.sln`
 
 ## Test Installation
