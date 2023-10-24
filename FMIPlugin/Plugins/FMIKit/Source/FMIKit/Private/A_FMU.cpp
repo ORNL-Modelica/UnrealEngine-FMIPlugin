@@ -192,6 +192,7 @@ void AA_FMU::ExtractFMU()
 	if (FPaths::IsRelative(*PathFMU.FilePath))
 	{
 		mPath.FilePath = FPaths::Combine(FPaths::ProjectContentDir(), PathFMU.FilePath);
+		mPath.FilePath = FPaths::ConvertRelativePathToFull(mPath.FilePath);
 	}
 
 	if (!FPaths::FileExists(*mPath.FilePath))
@@ -201,13 +202,14 @@ void AA_FMU::ExtractFMU()
 	}
 
 	// Gather parts of FMU path
-	mPath.FilePath = FPaths::ConvertRelativePathToFull(mPath.FilePath);
 	FString pathPart, filename, extension;
 	FPaths::Split(mPath.FilePath, pathPart, filename, extension);
 	std::string sPath = TCHAR_TO_UTF8(*mPath.FilePath);
 
 	// Define path for extracted the FMU
-	FString exDir = FPaths::ProjectDir() + "/fmus/"; // Directory to extract FMU
+	FString projPath = FPaths::ProjectDir();
+	FString exDir = IFileManager::Get().ConvertToAbsolutePathForExternalAppForRead(*projPath) + "fmus/"; // Directory to extract FMU
+	
 	if (!(FPaths::DirectoryExists(exDir))) {
 		std::string tempString = TCHAR_TO_UTF8(*exDir);
 		mkdir(tempString.c_str());
