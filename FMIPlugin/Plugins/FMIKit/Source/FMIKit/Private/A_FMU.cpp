@@ -320,17 +320,23 @@ float AA_FMU::GetReal(FString Name)
 {
 	if (!mModelVariables.Contains(FName(Name)))
 		return std::numeric_limits<float>::lowest();
+	if (!mbLoaded)
+		return std::numeric_limits<float>::lowest();
 	return mFmu->getReal(mModelVariables[FName(Name)].ValueReference);
 }
 
 void AA_FMU::DoStep(float StepSize)
 {
+	if (!mbLoaded)
+		return;
 	mFmu->doStep(StepSize);
 }
 
 void AA_FMU::SetReal(FString Name, float Value)
 {
 	if (!mModelVariables.Contains(FName(Name)))
+		return;
+	if (!mbLoaded)
 		return;
 	mFmu->setReal(mModelVariables[FName(Name)].ValueReference, Value);
 }
@@ -359,6 +365,8 @@ bool AA_FMU::ControlStep(float DeltaTime)
 
 void AA_FMU::SetInitialValues()
 {
+	if (!mbLoaded)
+		return;
 	for (const TPair<FString, float>& pair : mInitialValues)
 	{
 		AA_FMU::SetReal(pair.Key, pair.Value);

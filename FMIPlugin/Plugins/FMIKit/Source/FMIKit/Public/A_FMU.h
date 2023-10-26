@@ -142,9 +142,11 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
 	float mFMUTime;
+
+	UPROPERTY(BlueprintReadOnly, Category = "FMU Settings")
+		bool mbLoaded = false;
 private:
 	std::unique_ptr<fmikit::FMU2Slave> mFmu = nullptr;
-	bool mbLoaded = false;
 
 	fmi2Real mTimeLast;
 	fmi2Real mTimeNow;
