@@ -43,7 +43,7 @@ The process below will go through the steps to adding the plugin to a new Unreal
 1. Clone the repository and submodules. To do that, in the ``MYPROJECT/Plugins` folder:
    ```
    cd Plugins
-   git clone https://github.com/ORNL-Modelica/UnrealEngine-FMIPlugin.git UEFMI`
+   git clone https://github.com/ORNL-Modelica/UnrealEngine-FMIPlugin.git UEFMI
    cd UEFMI
    git submodule init
    git submodule update
