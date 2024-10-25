@@ -15,7 +15,7 @@
 
 This work was tested using the following. It may work on something else but no guarantees.
 - Windows 10
-- Unreal Engine 5.3+
+- Unreal Engine 5.1+
 - Visual Studio 2022
 - **An unzip utility on path, currently supported are unzip, 7z, tar**
 
@@ -43,7 +43,7 @@ The process below will go through the steps to adding the plugin to a new Unreal
 1. Clone the repository and submodules. To do that, in the ``MYPROJECT/Plugins` folder:
    ```
    cd Plugins
-   git clone https://github.com/ORNL-Modelica/UnrealEngine-FMIPlugin.git UEFMI`
+   git clone https://github.com/ORNL-Modelica/UnrealEngine-FMIPlugin.git UEFMI
    cd UEFMI
    git submodule init
    git submodule update
