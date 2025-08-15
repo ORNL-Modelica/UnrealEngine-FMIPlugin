@@ -148,7 +148,15 @@ void AA_FMU::Tick(float DeltaTime)
 
 			if (ControlStep(DeltaTime))
 			{
-				mFmu->doStep(mStepSize);
+				try {
+					mFmu->doStep(mStepSize);
+				}
+				catch (std::exception e)
+				{
+					FString errorMsg(e.what());
+					UE_LOG(LogTemp, Error, TEXT("%s"), *errorMsg);
+					return;
+				}
 			}
 			else
 			{
@@ -171,6 +179,7 @@ void AA_FMU::Tick(float DeltaTime)
 		{
 			FString errorMsg(e.what());
 			UE_LOG(LogTemp, Error, TEXT("%s"), *errorMsg);
+			return;
 		}
 	}
 }
@@ -322,14 +331,36 @@ float AA_FMU::GetReal(FString Name)
 		return std::numeric_limits<float>::lowest();
 	if (!mbLoaded)
 		return std::numeric_limits<float>::lowest();
-	return mFmu->getReal(mModelVariables[FName(Name)].ValueReference);
+
+	try {
+
+		float y = mFmu->getReal(mModelVariables[FName(Name)].ValueReference);
+		return y;
+	}
+	catch (std::exception e)
+	{
+		FString errorMsg(e.what());
+		UE_LOG(LogTemp, Error, TEXT("%s"), *errorMsg);
+		return 0;
+	}
 }
 
 void AA_FMU::DoStep(float StepSize)
 {
 	if (!mbLoaded)
 		return;
-	mFmu->doStep(StepSize);
+
+	try {
+		mFmu->doStep(StepSize);
+	}
+	catch (std::exception e)
+	{
+		FString errorMsg(e.what());
+		UE_LOG(LogTemp, Error, TEXT("%s"), *errorMsg);
+	}
+	catch (...) {
+		UE_LOG(LogTemp, Error, TEXT("An unknown error occurred during doStep."));
+	}
 }
 
 void AA_FMU::SetReal(FString Name, float Value)
@@ -338,7 +369,14 @@ void AA_FMU::SetReal(FString Name, float Value)
 		return;
 	if (!mbLoaded)
 		return;
-	mFmu->setReal(mModelVariables[FName(Name)].ValueReference, Value);
+	try {
+		mFmu->setReal(mModelVariables[FName(Name)].ValueReference, Value);
+	}
+	catch (std::exception e)
+	{
+		FString errorMsg(e.what());
+		UE_LOG(LogTemp, Error, TEXT("%s"), *errorMsg);
+	}
 }
 
 bool AA_FMU::ControlStep(float DeltaTime)
